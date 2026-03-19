@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BillSwift — Invoice Preview</title>
+<style>
+  body { font-family: 'Arial', sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+  .invoice { background: white; max-width: 800px; margin: 0 auto; padding: 40px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+  .header { display: flex; justify-content: space-between; margin-bottom: 30px; }
+  .brand { font-size: 24px; font-weight: 700; color: #1a5fa8; }
+  .invoice-title { font-size: 28px; font-weight: 700; color: #333; text-align: right; }
+  .invoice-no { font-size: 14px; color: #666; }
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+  .party-label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; margin-bottom: 6px; }
+  .party-name { font-size: 16px; font-weight: 600; color: #333; }
+  .party-detail { font-size: 13px; color: #666; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  th { background: #1a5fa8; color: white; padding: 10px 12px; text-align: left; font-size: 12px; }
+  td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+  .total-row { display: flex; justify-content: flex-end; }
+  .totals { width: 280px; }
+  .tot-line { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; border-bottom: 1px solid #eee; }
+  .tot-line.grand { font-size: 16px; font-weight: 700; color: #1a5fa8; border: none; padding-top: 10px; }
+  .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999; text-align: center; }
+  @media print { body { background: white; padding: 0; } .invoice { box-shadow: none; } .no-print { display: none; } }
+</style>
+</head>
+<body>
+<div class="no-print" style="text-align:center;margin-bottom:20px">
+  <button onclick="window.print()" style="padding:10px 24px;background:#1a5fa8;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer">🖨 Print / Save PDF</button>
+  <button onclick="window.close()" style="padding:10px 24px;background:#f0f0f0;color:#333;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px">✕ Close</button>
+</div>
+<div class="invoice">
+  <div class="header">
+    <div>
+      <div class="brand">BillSwift</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">BillSwift Enterprises Pvt. Ltd.</div>
+      <div style="font-size:12px;color:#666">GSTIN: 07AABCB1234L1Z5</div>
+    </div>
+    <div style="text-align:right">
+      <div class="invoice-title">TAX INVOICE</div>
+      <div class="invoice-no" id="inv_no">INV-2526-0001</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">Date: <span id="inv_date">—</span></div>
+      <div style="font-size:12px;color:#666">Due: <span id="inv_due">—</span></div>
+    </div>
+  </div>
+  <div class="parties">
+    <div>
+      <div class="party-label">Bill To</div>
+      <div class="party-name" id="client_name">Client Name</div>
+      <div class="party-detail" id="client_gstin"></div>
+      <div class="party-detail" id="client_address"></div>
+    </div>
+    <div>
+      <div class="party-label">From</div>
+      <div class="party-name">BillSwift Enterprises Pvt. Ltd.</div>
+      <div class="party-detail">B-12, Okhla Industrial Area, New Delhi</div>
+      <div class="party-detail">GSTIN: 07AABCB1234L1Z5</div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Description</th><th>HSN</th><th>Qty</th><th>Rate</th><th>GST%</th><th>Amount</th></tr></thead>
+    <tbody id="inv_items">
+      <tr><td>1</td><td>Services</td><td>—</td><td>1</td><td>₹1,000</td><td>18%</td><td>₹1,180</td></tr>
+    </tbody>
+  </table>
+  <div class="total-row">
+    <div class="totals" id="inv_totals">
+      <div class="tot-line"><span>Subtotal</span><span>₹1,000</span></div>
+      <div class="tot-line"><span>GST (18%)</span><span>₹180</span></div>
+      <div class="tot-line grand"><span>Total Payable</span><span>₹1,180</span></div>
+    </div>
+  </div>
+  <div class="footer">
+    Thank you for your business! · BillSwift ERP · support@billswift.in
+  </div>
+</div>
+</body>
+</html>

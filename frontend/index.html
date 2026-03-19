@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BillSwift ERP — Complete Web Application</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f3f2ed;--bg2:#ffffff;--bg3:#eeede7;--bg4:#e4e2da;--bg5:#d8d6ce;
+  --text:#18170f;--text2:#5a5850;--text3:#9a9788;
+  --border:#dedad0;--border2:#c8c5b8;
+  --blue:#1a5fa8;--blue-l:#e8f0fb;--blue-m:#b8d0f0;--blue-d:#154d8a;
+  --green:#2d6a1f;--green-l:#e8f5e2;--green-m:#b8dda8;
+  --amber:#8a5c0a;--amber-l:#fdf3e0;--amber-m:#f0c878;
+  --red:#8a1f1f;--red-l:#fde8e8;--red-m:#f0b0b0;
+  --purple:#3d2d8a;--purple-l:#eeebfb;
+  --teal:#0d6b5a;--teal-l:#e4f5f1;
+  --r:8px;--rl:12px;--rxl:16px;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --shadow:0 1px 4px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+  --shadow-lg:0 4px 24px rgba(0,0,0,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;overflow:hidden}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:100vh;height:100vh}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;z-index:10}
+.main{display:flex;flex-direction:column;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.brand{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.brand-icon{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:16px;height:16px;fill:white}
+.brand-text .name{font-size:15px;font-weight:700;letter-spacing:-0.3px}
+.brand-text .name em{color:var(--blue);font-style:normal}
+.brand-text .tagline{font-size:9px;color:var(--text3);margin-top:1px}
+.nav-scroll{flex:1;overflow-y:auto;padding:6px 8px}
+.nav-scroll::-webkit-scrollbar{width:0}
+.nav-group{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:12.5px;color:var(--text2);margin-bottom:1px;transition:all 0.12s;user-select:none;position:relative}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--blue-l);color:var(--blue);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--blue);border-radius:0 3px 3px 0}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.6}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--red);color:white;flex-shrink:0}
+.nav-badge.blue{background:var(--blue)}
+.nav-badge.amber{background:var(--amber)}
+.sidebar-user{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:background 0.12s}
+.user-card:hover{background:var(--bg3)}
+.u-avatar{width:30px;height:30px;border-radius:50%;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0}
+.u-name{font-size:12px;font-weight:500}
+.u-role{font-size:10px;color:var(--text3)}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;flex:1}
+.topbar-sub{font-size:11px;font-weight:400;color:var(--text3);margin-left:6px}
+.search-box{position:relative;display:flex;align-items:center}
+.search-box input{width:210px;padding:6px 10px 6px 30px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);background:var(--bg3);font-family:var(--font);outline:none;transition:all 0.15s}
+.search-box input:focus{border-color:var(--blue);background:var(--bg2);width:260px}
+.search-box svg{position:absolute;left:9px;color:var(--text3)}
+.tb-btn{padding:6px 12px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:var(--font);display:flex;align-items:center;gap:5px;transition:all 0.12s;white-space:nowrap}
+.tb-btn:hover{background:var(--bg3)}
+.tb-btn.primary{background:var(--blue);border-color:var(--blue);color:white}
+.tb-btn.primary:hover{background:var(--blue-d)}
+.tb-btn.success{background:var(--green);border-color:var(--green);color:white}
+.notif-btn{position:relative;padding:6px 10px}
+.notif-dot{position:absolute;top:4px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg2)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:18px 20px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.page{display:none}.page.active{display:block;animation:fadeUp 0.2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px}
+.card-sm{padding:12px 14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.card-hd h2{font-size:12.5px;font-weight:600;color:var(--text)}
+.card-link{font-size:11px;color:var(--blue);cursor:pointer}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:14px;overflow:hidden}
+.kpi{flex:1;padding:14px 16px;border-right:1px solid var(--border)}
+.kpi:last-child{border-right:none}
+.kpi-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.5px;line-height:1}
+.kpi-sub{font-size:10px;margin-top:3px}
+.up{color:var(--green)}.dn{color:var(--red)}.neu{color:var(--text3)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.split{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.split3{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.col{display:flex;flex-direction:column;gap:12px}
+
+/* ── METRICS ── */
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.m-label{font-size:10px;font-weight:500;color:var(--text3);margin-bottom:3px}
+.m-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.m-sub{font-size:10px;margin-top:2px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;color:var(--text3);font-weight:500;padding:0 10px 8px;border-bottom:1px solid var(--border);font-size:11px;white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background 0.1s}
+.tbl tbody tr:hover td{background:var(--bg3)}
+.tbl .mono{font-family:var(--mono);font-size:11px}
+.tbl .actions{display:flex;gap:6px;opacity:0;transition:opacity 0.15s}
+.tbl tr:hover .actions{opacity:1}
+
+/* ── PILLS ── */
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
+.p-green{background:var(--green-l);color:var(--green)}
+.p-amber{background:var(--amber-l);color:var(--amber)}
+.p-red{background:var(--red-l);color:var(--red)}
+.p-blue{background:var(--blue-l);color:var(--blue)}
+.p-purple{background:var(--purple-l);color:var(--purple)}
+.p-teal{background:var(--teal-l);color:var(--teal)}
+.p-gray{background:var(--bg4);color:var(--text2)}
+
+/* ── PROGRESS ── */
+.prog-wrap{background:var(--bg4);border-radius:4px;height:5px;overflow:hidden}
+.prog{height:100%;border-radius:4px;transition:width 0.4s}
+
+/* ── FORM ── */
+.form-grid{display:grid;gap:10px}
+.fg2{grid-template-columns:1fr 1fr}
+.fg3{grid-template-columns:1fr 1fr 1fr}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:10px;font-weight:500;color:var(--text2)}
+.fld input,.fld select,.fld textarea{padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);background:var(--bg2);font-family:var(--font);outline:none;transition:border-color 0.15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+.fld textarea{resize:vertical;min-height:60px}
+.fld.span2{grid-column:1/-1}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px}
+.tab{padding:8px 14px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.12s}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--blue);border-color:var(--blue)}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-bg.open{display:flex;animation:fadeIn 0.15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg2);border-radius:var(--rxl);padding:24px;width:620px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp 0.2s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:15px;font-weight:600}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);line-height:1;padding:2px 6px;border-radius:6px}
+.modal-close:hover{background:var(--bg3);color:var(--text)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ── ALERT ── */
+.alert{padding:9px 13px;border-radius:var(--r);font-size:12px;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.alert-blue{background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-m)}
+.alert-amber{background:var(--amber-l);color:var(--amber);border:1px solid var(--amber-m)}
+.alert-red{background:var(--red-l);color:var(--red);border:1px solid var(--red-m)}
+.alert-green{background:var(--green-l);color:var(--green);border:1px solid var(--green-m)}
+
+/* ── BAR CHART ── */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:3px 3px 0 0;background:var(--blue-m);transition:height 0.4s}
+.bar-fill.hi{background:var(--blue)}
+.bar-lbl{font-size:9px;color:var(--text3)}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+.tl-item:last-child{border:none}
+.tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.tl-content .tl-text{font-size:12px;color:var(--text)}
+.tl-content .tl-time{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* ── STOCK BAR ── */
+.stock-bar-wrap{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.stock-bar{height:100%;border-radius:3px;transition:width 0.4s}
+
+/* ── QUICK ACTIONS ── */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.qa{padding:12px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;text-align:center;background:var(--bg2);transition:all 0.15s}
+.qa:hover{background:var(--blue-l);border-color:var(--blue-m);transform:translateY(-1px)}
+.qa-ico{font-size:20px;margin-bottom:4px}
+.qa-lbl{font-size:11px;font-weight:500;color:var(--text2)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── POS ── */
+.pos-wrap{display:grid;grid-template-columns:1fr 340px;gap:12px;height:calc(100vh - 88px)}
+.pos-items{overflow:hidden;display:flex;flex-direction:column}
+.pos-item-search{padding:10px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.pos-item-search input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;font-family:var(--font);outline:none}
+.pos-item-search input:focus{border-color:var(--blue)}
+.pos-catalog{flex:1;overflow-y:auto;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-content:start}
+.pos-product{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;cursor:pointer;transition:all 0.12s}
+.pos-product:hover{border-color:var(--blue-m);background:var(--blue-l);transform:translateY(-1px)}
+.pos-product .pp-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.pos-product .pp-rate{font-size:13px;font-weight:700;color:var(--blue)}
+.pos-product .pp-gst{font-size:9px;color:var(--text3)}
+.pos-cart{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);display:flex;flex-direction:column;overflow:hidden}
+.pos-cart-hd{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;background:var(--blue);color:white;display:flex;justify-content:space-between;align-items:center}
+.pos-cart-items{flex:1;overflow-y:auto;padding:10px}
+.cart-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border:none}
+.ci-name{flex:1;font-size:12px;font-weight:500}
+.ci-qty{display:flex;align-items:center;gap:4px}
+.ci-qty button{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font)}
+.ci-qty button:hover{background:var(--blue-l);border-color:var(--blue-m)}
+.ci-qty span{font-size:12px;font-weight:600;min-width:20px;text-align:center}
+.ci-total{font-size:12px;font-weight:600;font-family:var(--mono);min-width:64px;text-align:right}
+.ci-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:0 2px}
+.ci-del:hover{color:var(--red)}
+.pos-cart-total{padding:10px 14px;border-top:1px solid var(--border);background:var(--bg3)}
+.pos-tot-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);padding:2px 0}
+.pos-tot-row.grand{font-size:15px;font-weight:700;color:var(--text);padding-top:6px;border-top:1px solid var(--border2);margin-top:4px}
+.pos-payment{padding:10px 14px;border-top:1px solid var(--border)}
+.pay-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.pay-mode{padding:7px;border:1px solid var(--border);border-radius:var(--r);text-align:center;cursor:pointer;font-size:11px;font-weight:500;color:var(--text2);background:var(--bg2);transition:all 0.12s}
+.pay-mode:hover,.pay-mode.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue)}
+.pay-mode .pm-ico{font-size:16px;display:block;margin-bottom:2px}
+.pos-charge-btn{width:100%;padding:10px;background:var(--green);border:none;border-radius:var(--r);color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background 0.12s}
+.pos-charge-btn:hover{background:#1f4d14}
+.pos-charge-btn:disabled{background:var(--text3);cursor:not-allowed}
+
+/* ── REPORT CARDS ── */
+.report-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:8px}
+.report-card:hover{border-color:var(--blue-m);box-shadow:var(--shadow);transform:translateY(-2px)}
+.rc-ico{font-size:24px}
+.rc-name{font-size:13px;font-weight:600;color:var(--text)}
+.rc-desc{font-size:11px;color:var(--text3)}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text);color:white;padding:10px 16px;border-radius:var(--r);font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;animation:slideRight 0.25s ease;box-shadow:var(--shadow-lg);min-width:200px}
+@keyframes slideRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.toast.info{background:var(--blue)}
+
+/* ── DIVIDER ── */
+hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* ── MOD HEADER ── */
+.mod-hd{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.mod-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-title{font-size:16px;font-weight:700;color:var(--text)}
+.mod-sub{font-size:11px;color:var(--text3)}
+
+/* ── INVOICE FORM ── */
+.inv-items-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}
+.inv-items-table th{background:var(--bg3);padding:7px 8px;text-align:left;font-weight:600;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--border)}
+.inv-items-table td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+.inv-items-table td input,.inv-items-table td select{width:100%;padding:5px 7px;border:1px solid transparent;border-radius:5px;font-size:11px;font-family:var(--font);background:transparent;color:var(--text);outline:none}
+.inv-items-table td input:focus,.inv-items-table td select:focus{border-color:var(--blue-m);background:var(--bg2)}
+.inv-items-table .row-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px;border-radius:4px}
+.inv-items-table .row-del:hover{color:var(--red);background:var(--red-l)}
+.add-row-btn{font-size:11px;color:var(--blue);background:none;border:1px dashed var(--blue-m);border-radius:var(--r);padding:5px 10px;cursor:pointer;font-family:var(--font);transition:all 0.15s;margin-bottom:12px}
+.add-row-btn:hover{background:var(--blue-l)}
+.totals-panel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.tot-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;color:var(--text2)}
+.tot-row.grand{font-size:13px;font-weight:700;color:var(--text);border-top:1px solid var(--border2);padding-top:8px;margin-top:5px}
+.tot-val{font-family:var(--mono)}
+
+/* ── AUTH GUARD ── */
+.app-locked { filter: blur(8px) brightness(0.4); pointer-events: none; user-select: none; }
+.app-locked * { pointer-events: none; }
+
+/* ── GST TOGGLE ── */
+.gst-toggle{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.gst-opt{flex:1;padding:7px;text-align:center;font-size:11px;font-weight:500;cursor:pointer;color:var(--text3);background:var(--bg3);border:none;font-family:var(--font);transition:all 0.12s}
+.gst-opt.on{background:var(--blue);color:white}
+</style>
+</head>
+<body>
+<div class="app app-locked" id="mainApp">
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+    </div>
+    <div class="brand-text">
+      <div class="name">Bill<em>Swift</em></div>
+      <div class="tagline">Enterprise ERP v2.1</div>
+    </div>
+  </div>
+  <div class="nav-scroll">
+    <div class="nav-group">Overview</div>
+    <div class="nav-item active" onclick="goto('dashboard',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Dashboard
+    </div>
+    <div class="nav-group">Modules</div>
+    <div class="nav-item" onclick="goto('admin',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 100 6A3 3 0 008 1zm-5 9a5 5 0 0110 0v1H3v-1z"/></svg>Admin
+    </div>
+    <div class="nav-item" onclick="goto('inventory',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14v3H1zm0 4h14v9H1V6zm2 2v5h3V8H3zm5 0v5h3V8H8z"/></svg>Inventory
+      <span class="nav-badge amber">3</span>
+    </div>
+    <div class="nav-item" onclick="goto('procurement',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12l-1 8H3L2 2zm1.5 9h9l1-1H2.5l1 1zm-.5 2a1 1 0 102 0 1 1 0 00-2 0zm8 0a1 1 0 102 0 1 1 0 00-2 0z"/></svg>Procurement
+    </div>
+    <div class="nav-item" onclick="goto('sales',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v10H2V2zm1 1v8h10V3H3zm1 6l2-3 2 2 2-4 2 3"/></svg>Sales & Distribution
+      <span class="nav-badge">5</span>
+    </div>
+    <div class="nav-item" onclick="goto('retail',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14l-1 5H2L1 2zm.5 6h13v8h-13V8zm2 2v4h2v-4H3.5zm4 0v4h2v-4H7.5z"/></svg>Retail / POS
+    </div>
+    <div class="nav-item" onclick="goto('finance',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-1h1.5v1zm0-2h-1.5V4.5h1.5V9.5z"/></svg>Finance & Accounts
+    </div>
+    <div class="nav-item" onclick="goto('reports',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 1h12v14H2V1zm2 3v1h8V4H4zm0 2.5v1h8v-1H4zm0 2.5v1h6v-1H4z"/></svg>Reports & Analytics
+    </div>
+    <div class="nav-group">Tools</div>
+    <div class="nav-item" onclick="goto('invoice_maker',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 2.5v1h8v-1H4zm0 2.5v1h5v-1H4z"/></svg>Invoice Maker
+    </div>
+    <div class="nav-item" onclick="goto('settings',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a3 3 0 100 6A3 3 0 008 5zm0 1.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/><path d="M8 0a1 1 0 01.97.757l.3 1.19a5.98 5.98 0 011.4.812l1.15-.487a1 1 0 011.27.447l1 1.732a1 1 0 01-.26 1.31l-.97.704c.034.344.034.69 0 1.034l.97.704a1 1 0 01.26 1.31l-1 1.732a1 1 0 01-1.27.447l-1.15-.487a5.98 5.98 0 01-1.4.812l-.3 1.19A1 1 0 018 16a1 1 0 01-.97-.757l-.3-1.19a5.98 5.98 0 01-1.4-.812l-1.15.487a1 1 0 01-1.27-.447l-1-1.732a1 1 0 01.26-1.31l.97-.704a6.04 6.04 0 010-1.034l-.97-.704a1 1 0 01-.26-1.31l1-1.732a1 1 0 011.27-.447l1.15.487a5.98 5.98 0 011.4-.812l.3-1.19A1 1 0 018 0z"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-card">
+      <div class="u-avatar">RK</div>
+      <div><div class="u-name">Admin User</div><div class="u-role">Super Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle">Dashboard <span class="topbar-sub">March 2026 · FY 2025–26</span></div>
+    <div class="search-box">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a5 5 0 100 10A5 5 0 007 2zm-7 5a7 7 0 1112.6 4.2l3.1 3.1-1.4 1.4-3.1-3.1A7 7 0 010 7z"/></svg>
+      <input type="text" placeholder="Search anything..." id="globalSearch" oninput="handleSearch(this.value)"/>
+    </div>
+    <button class="tb-btn notif-btn" onclick="showToast('3 unread notifications','info')">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-2 2v1h14v-1l-2-2V6a5 5 0 00-5-5zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+      <div class="notif-dot"></div>
+    </button>
+    <button class="tb-btn primary" id="topActionBtn" onclick="handleTopAction()">+ New Invoice</button>
+  </div>
+
+  <div class="content" id="pageContent">
+
+<!-- ════════════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-val">₹18.4L</div><div class="kpi-sub up">↑ 12.3% vs last month</div></div>
+    <div class="kpi"><div class="kpi-label">Outstanding</div><div class="kpi-val">₹4.2L</div><div class="kpi-sub dn">8 invoices overdue</div></div>
+    <div class="kpi"><div class="kpi-label">PO Value</div><div class="kpi-val">₹6.1L</div><div class="kpi-sub up">3 POs this week</div></div>
+    <div class="kpi"><div class="kpi-label">Stock Value</div><div class="kpi-val">₹31.7L</div><div class="kpi-sub dn">3 items low stock</div></div>
+    <div class="kpi"><div class="kpi-label">Active Clients</div><div class="kpi-val">67</div><div class="kpi-sub up">↑ 5 new this month</div></div>
+  </div>
+  <div class="alert alert-amber">⚠ 3 items below reorder level · 2 invoices due today · GST filing due in 4 days · 1 PO awaiting approval</div>
+  <div class="split" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-hd"><h2>Revenue — last 8 months</h2><span class="card-link" onclick="goto('reports',document.querySelector('[onclick*=reports]'))">Full report →</span></div>
+      <div class="bar-chart">
+        <div class="bar-col"><div class="bar-fill" style="height:40px"></div><div class="bar-lbl">Aug</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:52px"></div><div class="bar-lbl">Sep</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:36px"></div><div class="bar-lbl">Oct</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:64px"></div><div class="bar-lbl">Nov</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:78px"></div><div class="bar-lbl">Dec</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:58px"></div><div class="bar-lbl">Jan</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:68px"></div><div class="bar-lbl">Feb</div></div>
+        <div class="bar-col"><div class="bar-fill hi" style="height:80px"></div><div class="bar-lbl" style="color:var(--blue);font-weight:600">Mar</div></div>
+      </div>
+      <hr class="div">
+      <div class="g3">
+        <div><div style="font-size:10px;color:var(--text3)">Invoiced</div><div style="font-size:15px;font-weight:700">₹18.4L</div></div>
+        <div><div style="font-size:10px;color:var(--text3)">Collected</div><div style="font-size:15px;font-weight:700">₹14.2L</div></div>
+        <div><div style="font-size:10px;color:var(--text3)">GST payable</div><div style="font-size:15px;font-weight:700">₹2.8L</div></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Activity feed</h2></div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-content"><div class="tl-text">No recent activity</div><div class="tl-time">Add your first invoice to get started</div></div></div>
+          
+          <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-content"><div class="tl-text">Low stock: Laptop i5 (3 units)</div><div class="tl-time">3 hr ago</div></div></div>
+          
+          
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Module health</h2></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>Sales</span><span style="color:var(--green)">94%</span></div><div class="prog-wrap"><div class="prog" style="width:94%;background:var(--green)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>Inventory</span><span style="color:var(--blue)">87%</span></div><div class="prog-wrap"><div class="prog" style="width:87%;background:var(--blue)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>Procurement</span><span style="color:var(--amber)">62%</span></div><div class="prog-wrap"><div class="prog" style="width:62%;background:var(--amber)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>Finance</span><span style="color:var(--green)">100%</span></div><div class="prog-wrap"><div class="prog" style="width:100%;background:var(--green)"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><h2>Recent invoices</h2><button class="tb-btn" style="font-size:11px;padding:4px 9px" onclick="goto('sales',document.querySelector('[onclick*=sales]'))">View all →</button></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>#</th><th>Client</th><th>Date</th><th>Amount</th><th>GST</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="dashInvTable"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h2>Top products</h2></div>
+      <table class="tbl">
+        <thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead>
+        <tbody>
+          <tr><td>Laptop i5 Gen12</td><td>42</td><td>₹4.2L</td></tr>
+          <tr><td>Office Chair Pro</td><td>120</td><td>₹2.8L</td></tr>
+          <tr><td>Dev Services</td><td>18</td><td>₹2.1L</td></tr>
+          <tr><td>UPS 1KVA</td><td>65</td><td>₹1.6L</td></tr>
+          <tr><td>Cable Cat6 50m</td><td>200</td><td>₹0.8L</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     ADMIN
+════════════════════════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--blue-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--blue)"><path d="M8 1a3 3 0 100 6A3 3 0 008 1zm-5 9a5 5 0 0110 0v1H3v-1z"/></svg></div>
+    <div><div class="mod-title">Admin Panel</div><div class="mod-sub">Users, roles, company settings, integrations & audit logs</div></div>
+    <button class="tb-btn primary" style="margin-left:auto" onclick="openModal('addUserModal')">+ Add User</button>
+  </div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Total Users</div><div class="m-val">0</div><div class="m-sub neu">No users yet</div></div>
+    <div class="metric"><div class="m-label">Active Sessions</div><div class="m-val">0</div><div class="m-sub neu">Right now</div></div>
+    <div class="metric"><div class="m-label">Roles</div><div class="m-val">5</div><div class="m-sub neu">Custom RBAC</div></div>
+    <div class="metric"><div class="m-label">Branches</div><div class="m-val">0</div><div class="m-sub neu">Not configured</div></div>
+  </div>
+  <div class="tabs"><div class="tab on" onclick="switchTab(this,'a1')">Users</div><div class="tab" onclick="switchTab(this,'a2')">Company Settings</div><div class="tab" onclick="switchTab(this,'a3')">Integrations</div><div class="tab" onclick="switchTab(this,'a4')">Audit Log</div></div>
+  <div id="a1">
+    <div class="split3">
+      <div class="card">
+        <div class="card-hd"><h2>User management</h2></div>
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Role</th><th>Branch</th><th>Last login</th><th>Status</th><th></th></tr></thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>Roles & permissions</h2></div>
+        <div style="display:flex;flex-direction:column;gap:7px" id="rolesPanel"></div>
+      </div>
+    </div>
+  </div>
+  <div id="a2" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="card-hd"><h2>Company details</h2></div>
+        <div class="form-grid fg2">
+          <div class="fld span2"><label>Company name</label><input value="BillSwift Enterprises Pvt. Ltd."/></div>
+          <div class="fld"><label>GSTIN</label><input value="07AABCB1234L1Z5" style="font-family:var(--mono)"/></div>
+          <div class="fld"><label>PAN</label><input value="AABCB1234L" style="font-family:var(--mono)"/></div>
+          <div class="fld"><label>CIN</label><input value="U72900DL2023PTC123456" style="font-family:var(--mono)"/></div>
+          <div class="fld"><label>Financial year start</label><select><option>April 1</option><option>January 1</option></select></div>
+          <div class="fld span2"><label>Registered address</label><textarea rows="2">B-12, Okhla Industrial Area Phase II, New Delhi – 110020</textarea></div>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="tb-btn primary" onclick="showToast('Settings saved','success')">Save changes</button></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>GST & tax settings</h2></div>
+        <div class="form-grid">
+          <div class="fld"><label>GST registration type</label><select><option>Regular taxpayer</option><option>Composition scheme</option></select></div>
+          <div class="fld"><label>Default GST rate</label><select><option>5%</option><option>12%</option><option selected>18%</option><option>28%</option></select></div>
+          <div class="fld"><label>E-invoice threshold</label><select><option>₹5 Cr turnover</option><option>₹10 Cr</option></select></div>
+          <div class="fld"><label>TDS applicable</label><select><option>Yes</option><option>No</option></select></div>
+        </div>
+        <hr class="div">
+        <div class="card-hd"><h2>Bank accounts</h2><button class="tb-btn" style="font-size:11px;padding:4px 9px">+ Add</button></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:9px 11px;border:1px solid var(--border);border-radius:var(--r);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:500">HDFC Bank — Current A/C</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono)">XXXX XXXX 4821 · HDFC0001234</div></div><span class="pill p-green">Primary</span></div>
+          <div style="padding:9px 11px;border:1px solid var(--border);border-radius:var(--r);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:500">SBI — Savings A/C</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono)">XXXX XXXX 9120 · SBIN0001234</div></div><span class="pill p-gray">Secondary</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="a3" style="display:none">
+    <div class="g3" id="integrationsGrid"></div>
+  </div>
+  <div id="a4" style="display:none">
+    <div class="card">
+      <div class="card-hd"><h2>Audit log</h2></div>
+      <table class="tbl">
+        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Module</th><th>IP</th></tr></thead>
+        <tbody id="auditTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     INVENTORY
+════════════════════════════════════════════ -->
+<div class="page" id="page-inventory">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--purple-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--purple)"><path d="M1 2h14v3H1zm0 4h14v9H1V6zm2 2v5h3V8H3zm5 0v5h3V8H8z"/></svg></div>
+    <div><div class="mod-title">Inventory Management</div><div class="mod-sub">Stock levels, warehouses, movements & reorder alerts</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="tb-btn" onclick="openModal('adjustStockModal')">Adjust Stock</button>
+      <button class="tb-btn primary" onclick="openModal('addItemModal')">+ Add Item</button>
+    </div>
+  </div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Total SKUs</div><div class="m-val">284</div><div class="m-sub up">↑ 12 added</div></div>
+    <div class="metric"><div class="m-label">Stock Value</div><div class="m-val">₹31.7L</div><div class="m-sub up">↑ 4.2%</div></div>
+    <div class="metric"><div class="m-label">Low Stock</div><div class="m-val" style="color:var(--red)">3</div><div class="m-sub dn">Need reorder</div></div>
+    <div class="metric"><div class="m-label">Warehouses</div><div class="m-val">0</div><div class="m-sub neu">Not configured</div></div>
+  </div>
+  <div class="alert alert-red">🔴 Items below reorder level: Laptop i5 Gen12 (3 units), UPS 1KVA (2 units), Mouse Wireless (5 units)</div>
+  <div class="split">
+    <div class="card">
+      <div class="card-hd"><h2>Stock register</h2>
+        <div style="display:flex;gap:6px">
+          <select style="padding:5px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:11px;background:var(--bg2);color:var(--text);font-family:var(--font)"><option>All categories</option><option>Electronics</option><option>Furniture</option><option>Cables</option></select>
+          <button class="tb-btn" style="font-size:11px;padding:4px 9px" onclick="showToast('Exporting stock register...','info')">Export</button>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="stockTable">
+        <thead><tr><th>SKU</th><th>Item</th><th>Category</th><th>In Stock</th><th>Reorder</th><th>Level</th><th>Value</th><th>Status</th></tr></thead>
+        <tbody id="stockBody"></tbody>
+      </table></div>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Category breakdown</h2></div>
+        <div style="display:flex;flex-direction:column;gap:7px" id="catBreakdown"></div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Today's movements</h2></div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-content"><div class="tl-text">+10 Office Chair · GRN-042</div><div class="tl-time">11:20 AM · Delhi WH</div></div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-content"><div class="tl-text">No stock movements yet</div><div class="tl-time">Add products to track movements</div></div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-content"><div class="tl-text">Transfer 20 Cat6 → GGN</div><div class="tl-time">9:00 AM</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PROCUREMENT
+════════════════════════════════════════════ -->
+<div class="page" id="page-procurement">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--teal-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--teal)"><path d="M2 2h12l-1 8H3L2 2zm1.5 9h9l1-1H2.5l1 1zm-.5 2a1 1 0 102 0 1 1 0 00-2 0zm8 0a1 1 0 102 0 1 1 0 00-2 0z"/></svg></div>
+    <div><div class="mod-title">Procurement</div><div class="mod-sub">Purchase orders, vendors, GRN & approval workflow</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px"><button class="tb-btn" onclick="openModal('addVendorModal')">+ Add Vendor</button><button class="tb-btn primary" onclick="openModal('newPOModal')">+ New PO</button></div>
+  </div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Open POs</div><div class="m-val">8</div><div class="m-sub neu">₹6.1L pending</div></div>
+    <div class="metric"><div class="m-label">This Month Spend</div><div class="m-val">₹9.4L</div><div class="m-sub dn">↑ 8% vs last</div></div>
+    <div class="metric"><div class="m-label">Vendors</div><div class="m-val">23</div><div class="m-sub up">↑ 2 new</div></div>
+    <div class="metric"><div class="m-label">Pending GRN</div><div class="m-val">3</div><div class="m-sub dn">Awaiting receipt</div></div>
+  </div>
+  <div class="split">
+    <div class="card">
+      <div class="card-hd"><h2>Purchase orders</h2></div>
+      <div class="tabs"><div class="tab on" onclick="switchTab(this,'p1')">All</div><div class="tab" onclick="switchTab(this,'p2')">Pending</div><div class="tab" onclick="switchTab(this,'p3')">GRN Pending</div><div class="tab" onclick="switchTab(this,'p4')">Completed</div></div>
+      <div id="p1"><table class="tbl"><thead><tr><th>PO #</th><th>Vendor</th><th>Items</th><th>Amount</th><th>Expected</th><th>Status</th><th>Action</th></tr></thead><tbody id="poTable"></tbody></table></div>
+      <div id="p2" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">2 POs pending approval</div></div>
+      <div id="p3" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">3 POs awaiting GRN</div></div>
+      <div id="p4" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">12 completed POs this month</div></div>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Top vendors</h2></div>
+        <div id="vendorList" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Approval workflow</h2></div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+          <div style="padding:8px;border-radius:var(--r);background:var(--green-l);color:var(--green)"><strong>Up to ₹50K</strong> — Auto approve</div>
+          <div style="padding:8px;border-radius:var(--r);background:var(--blue-l);color:var(--blue)"><strong>₹50K – ₹5L</strong> — Finance Manager</div>
+          <div style="padding:8px;border-radius:var(--r);background:var(--amber-l);color:var(--amber)"><strong>Above ₹5L</strong> — Super Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SALES & DISTRIBUTION
+════════════════════════════════════════════ -->
+<div class="page" id="page-sales">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--green-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--green)"><path d="M2 2h12v10H2V2zm1 1v8h10V3H3zm1 5.5l2-3 2 2 2-4 2 3"/></svg></div>
+    <div><div class="mod-title">Sales & Distribution</div><div class="mod-sub">Invoices, quotations, delivery orders & commission tracking</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="tb-btn" onclick="openModal('addClientModal')">+ Add Client</button>
+      <button class="tb-btn" onclick="openModal('newQuoteModal')">New Quotation</button>
+      <button class="tb-btn primary" onclick="openModal('newInvoiceModal')">+ New Invoice</button>
+    </div>
+  </div>
+  <div class="g5" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Sales this month</div><div class="m-val">₹18.4L</div><div class="m-sub up">↑ 12.3%</div></div>
+    <div class="metric"><div class="m-label">Invoices</div><div class="m-val">142</div><div class="m-sub up">↑ 18 this week</div></div>
+    <div class="metric"><div class="m-label">Outstanding</div><div class="m-val">₹4.2L</div><div class="m-sub dn">8 overdue</div></div>
+    <div class="metric"><div class="m-label">Quotations</div><div class="m-val">24</div><div class="m-sub neu">8 converted</div></div>
+    <div class="metric"><div class="m-label">New clients</div><div class="m-val">5</div><div class="m-sub up">↑ this month</div></div>
+  </div>
+  <div class="split">
+    <div class="card">
+      <div class="card-hd"><h2>Invoice register</h2></div>
+      <div class="tabs"><div class="tab on" onclick="switchTab(this,'s1')">All</div><div class="tab" onclick="switchTab(this,'s2')">Pending</div><div class="tab" onclick="switchTab(this,'s3')">Overdue</div><div class="tab" onclick="switchTab(this,'s4')">Paid</div></div>
+      <div id="s1"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th>Client</th><th>Date</th><th>Due</th><th>Amount</th><th>GST</th><th>Status</th><th>Action</th></tr></thead><tbody id="salesInvTable"></tbody></table></div></div>
+      <div id="s2" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">8 pending invoices totalling ₹3.2L</div></div>
+      <div id="s3" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">3 overdue invoices — action required</div></div>
+      <div id="s4" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">131 paid invoices this month</div></div>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Sales rep performance</h2></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>—</span><span style="font-weight:600">₹0</span></div><div class="prog-wrap"><div class="prog" style="width:85%;background:var(--green)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>—</span><span style="font-weight:600">₹0</span></div><div class="prog-wrap"><div class="prog" style="width:58%;background:var(--blue)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span>—</span><span style="font-weight:600">₹0</span></div><div class="prog-wrap"><div class="prog" style="width:48%;background:var(--amber)"></div></div></div>
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Delivery orders</h2></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:8px;border:1px solid var(--border);border-radius:var(--r);text-align:center;color:var(--text3);font-size:12px">No delivery orders yet</div>
+          
+          <div style="padding:8px;border:1px solid var(--border);border-radius:var(--r);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:500">DO-0419</div><div style="font-size:10px;color:var(--text3)">Sharma · UPS units</div></div><span class="pill p-amber">Pending</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     RETAIL / POS
+════════════════════════════════════════════ -->
+<div class="page" id="page-retail">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--amber-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--amber)"><path d="M1 2h14l-1 5H2L1 2zm.5 6h13v8h-13V8zm2 2v4h2v-4H3.5zm4 0v4h2v-4H7.5z"/></svg></div>
+    <div><div class="mod-title">Retail / POS Terminal</div><div class="mod-sub">Touch-friendly billing, counter sales, daily closing & payment</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <div style="font-size:11px;color:var(--text3)">Session: <span style="color:var(--green);font-weight:500">Open</span></div>
+      <button class="tb-btn" onclick="showToast('Session closed. Report generated.','success')">Close Day</button>
+    </div>
+  </div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Today's Sales</div><div class="m-val">₹42,800</div><div class="m-sub up">↑ 18% vs yesterday</div></div>
+    <div class="metric"><div class="m-label">Transactions</div><div class="m-val">38</div><div class="m-sub up">↑ 12 this hour</div></div>
+    <div class="metric"><div class="m-label">Avg Bill Value</div><div class="m-val">₹1,126</div><div class="m-sub up">↑ ₹82 vs avg</div></div>
+    <div class="metric"><div class="m-label">Returns</div><div class="m-val">2</div><div class="m-sub dn">₹3,200 refunded</div></div>
+  </div>
+  <div class="pos-wrap">
+    <div class="card pos-items" style="padding:0">
+      <div class="pos-item-search">
+        <input type="text" placeholder="Search products by name or SKU..." id="posSearch" oninput="filterPosProducts(this.value)"/>
+        <button class="tb-btn" style="font-size:11px" onclick="showToast('Barcode scanner ready','info')">📷 Scan</button>
+      </div>
+      <div class="pos-catalog" id="posCatalog"></div>
+    </div>
+    <div class="pos-cart">
+      <div class="pos-cart-hd"><span>🛒 Cart</span><span id="cartCount" style="font-size:11px;font-weight:400;opacity:0.8">0 items</span></div>
+      <div class="pos-cart-items" id="cartItems"><div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">Add items from the catalog →</div></div>
+      <div class="pos-cart-total" id="cartTotals">
+        <div class="pos-tot-row"><span>Subtotal</span><span>₹0.00</span></div>
+        <div class="pos-tot-row"><span>GST</span><span>₹0.00</span></div>
+        <div class="pos-tot-row grand"><span>Total</span><span id="cartGrand">₹0.00</span></div>
+      </div>
+      <div class="pos-payment">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em">Payment mode</div>
+        <div class="pay-modes">
+          <div class="pay-mode on" onclick="selectPayMode(this,'upi')"><span class="pm-ico">📱</span>UPI</div>
+          <div class="pay-mode" onclick="selectPayMode(this,'card')"><span class="pm-ico">💳</span>Card</div>
+          <div class="pay-mode" onclick="selectPayMode(this,'cash')"><span class="pm-ico">💵</span>Cash</div>
+        </div>
+        <button class="pos-charge-btn" id="chargeBtn" onclick="processSale()">Charge ₹0.00</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     FINANCE
+════════════════════════════════════════════ -->
+<div class="page" id="page-finance">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--teal-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--teal)"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v1.5M8 9.5V11M6 7.5h3.5a1 1 0 010 2H6.5a1 1 0 000 2H10" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></div>
+    <div><div class="mod-title">Finance & Accounts</div><div class="mod-sub">Ledger, P&L, GST returns, receivables & bank reconciliation</div></div>
+    <button class="tb-btn primary" style="margin-left:auto" onclick="openModal('recordPaymentModal')">+ Record Payment</button>
+  </div>
+  <div class="g5" style="margin-bottom:12px">
+    <div class="metric"><div class="m-label">Cash & Bank</div><div class="m-val">₹12.4L</div><div class="m-sub up">↑ 3.2%</div></div>
+    <div class="metric"><div class="m-label">Receivables</div><div class="m-val">₹4.2L</div><div class="m-sub dn">8 overdue</div></div>
+    <div class="metric"><div class="m-label">Payables</div><div class="m-val">₹6.1L</div><div class="m-sub dn">3 POs pending</div></div>
+    <div class="metric"><div class="m-label">GST Payable</div><div class="m-val">₹2.8L</div><div class="m-sub dn" style="color:var(--red)">Due 20 Apr</div></div>
+    <div class="metric"><div class="m-label">Net Profit</div><div class="m-val" style="color:var(--green)">+₹5.1L</div><div class="m-sub up">This month</div></div>
+  </div>
+  <div class="split">
+    <div class="card">
+      <div class="card-hd"><h2>General ledger</h2></div>
+      <div class="tabs"><div class="tab on" onclick="switchTab(this,'f1')">All entries</div><div class="tab" onclick="switchTab(this,'f2')">Receivables</div><div class="tab" onclick="switchTab(this,'f3')">Payables</div><div class="tab" onclick="switchTab(this,'f4')">Bank</div></div>
+      <div id="f1"><table class="tbl"><thead><tr><th>Date</th><th>Voucher</th><th>Narration</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody id="ledgerTable"></tbody></table></div>
+      <div id="f2" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">₹4.2L outstanding from 8 clients</div></div>
+      <div id="f3" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">₹6.1L payable to 3 vendors</div></div>
+      <div id="f4" style="display:none"><div style="padding:20px;text-align:center;color:var(--text3)">Bank: ₹12.4L · Last synced today 2:00 PM</div></div>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>GST summary — Mar 2026</h2></div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span>Output GST (Sales)</span><span style="font-weight:600;color:var(--green)">₹3,24,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span>Input GST (Purchases)</span><span style="font-weight:600;color:var(--blue)">₹44,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-weight:700"><span>Net GST payable</span><span style="color:var(--red)">₹2,80,000</span></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="tb-btn" style="flex:1;font-size:11px;justify-content:center" onclick="showToast('GSTR-1 downloaded','success')">GSTR-1</button>
+          <button class="tb-btn" style="flex:1;font-size:11px;justify-content:center" onclick="showToast('GSTR-3B downloaded','success')">GSTR-3B</button>
+          <button class="tb-btn primary" style="flex:1;font-size:11px;justify-content:center" onclick="showToast('Filing portal opening...','info')">File now</button>
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>P&L snapshot</h2></div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Gross revenue</span><span>₹18,40,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>COGS</span><span style="color:var(--red)">-₹9,40,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Gross profit</span><span style="font-weight:600">₹9,00,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Operating expenses</span><span style="color:var(--red)">-₹3,90,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-weight:700"><span>Net profit</span><span style="color:var(--green)">₹5,10,000</span></div>
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Bank reconciliation</h2></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0">
+          <div><div style="font-size:10px;color:var(--text3)">Book balance</div><div style="font-weight:700">₹12,40,000</div></div>
+          <div style="color:var(--text3);font-size:16px;align-self:center">↔</div>
+          <div style="text-align:right"><div style="font-size:10px;color:var(--text3)">Bank statement</div><div style="font-weight:700">₹12,40,000</div></div>
+        </div>
+        <div style="margin-top:8px;padding:7px;background:var(--green-l);border-radius:var(--r);font-size:11px;color:var(--green);text-align:center">✓ Fully reconciled</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     REPORTS
+════════════════════════════════════════════ -->
+<div class="page" id="page-reports">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--purple-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--purple)"><path d="M2 1h12v14H2V1zm2 3v1h8V4H4zm0 2.5v1h8v-1H4zm0 2.5v1h6v-1H4z"/></svg></div>
+    <div><div class="mod-title">Reports & Analytics</div><div class="mod-sub">Business intelligence, GST reports & scheduled exports</div></div>
+    <button class="tb-btn" style="margin-left:auto" onclick="showToast('Scheduling report...','info')">Schedule report</button>
+  </div>
+  <div class="qa-grid" id="reportCards"></div>
+  <div class="split3">
+    <div class="card">
+      <div class="card-hd"><h2>Sales by category — Mar 2026</h2><button class="tb-btn success" style="font-size:11px;padding:4px 9px" onclick="showToast('Exporting Excel...','success')">⬇ Excel</button></div>
+      <table class="tbl">
+        <thead><tr><th>Category</th><th>Invoices</th><th>Revenue</th><th>GST</th><th>Share</th></tr></thead>
+        <tbody>
+          <tr><td>Electronics</td><td>58</td><td>₹9,20,000</td><td>₹1,65,600</td><td><div class="prog-wrap" style="width:100px"><div class="prog" style="width:50%;background:var(--blue)"></div></div></td></tr>
+          <tr><td>Furniture</td><td>34</td><td>₹5,80,000</td><td>₹65,250</td><td><div class="prog-wrap" style="width:100px"><div class="prog" style="width:32%;background:var(--teal)"></div></div></td></tr>
+          <tr><td>Services</td><td>28</td><td>₹2,40,000</td><td>₹43,200</td><td><div class="prog-wrap" style="width:100px"><div class="prog" style="width:13%;background:var(--amber)"></div></div></td></tr>
+          <tr><td>Accessories</td><td>22</td><td>₹1,00,000</td><td>₹18,000</td><td><div class="prog-wrap" style="width:100px"><div class="prog" style="width:5%;background:var(--purple)"></div></div></td></tr>
+        </tbody>
+      </table>
+      <hr class="div">
+      <div class="card-hd"><h2>Client ageing analysis</h2></div>
+      <table class="tbl">
+        <thead><tr><th>Client</th><th>0–30 days</th><th>31–60 days</th><th>60+ days</th><th>Total</th></tr></thead>
+        <tbody>
+          
+          
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Scheduled reports</h2></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:8px;border:1px solid var(--border);border-radius:var(--r)"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;font-weight:500">Monthly Sales</span><span class="pill p-green">Active</span></div><div style="font-size:10px;color:var(--text3);margin-top:2px">Every 1st · Email to Rajesh</div></div>
+          <div style="padding:8px;border:1px solid var(--border);border-radius:var(--r)"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;font-weight:500">Weekly GST</span><span class="pill p-green">Active</span></div><div style="font-size:10px;color:var(--text3);margin-top:2px">Every Monday · WhatsApp</div></div>
+          <div style="padding:8px;border:1px solid var(--border);border-radius:var(--r)"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;font-weight:500">Daily POS closing</span><span class="pill p-blue">Pending</span></div><div style="font-size:10px;color:var(--text3);margin-top:2px">Every 10 PM · Email</div></div>
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div class="card-hd"><h2>Export formats</h2></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <button class="tb-btn" style="justify-content:center;font-size:11px" onclick="showToast('Generating PDF...','info')">📄 PDF</button>
+          <button class="tb-btn" style="justify-content:center;font-size:11px" onclick="showToast('Generating Excel...','info')">📊 Excel</button>
+          <button class="tb-btn" style="justify-content:center;font-size:11px" onclick="showToast('Generating CSV...','info')">📋 CSV</button>
+          <button class="tb-btn" style="justify-content:center;font-size:11px" onclick="showToast('Generating Tally XML...','info')">🔗 Tally XML</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     INVOICE MAKER
+════════════════════════════════════════════ -->
+<div class="page" id="page-invoice_maker">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--blue-l)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--blue)"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 2.5v1h8v-1H4zm0 2.5v1h5v-1H4z"/></svg></div>
+    <div><div class="mod-title">Invoice Maker</div><div class="mod-sub">Create GST-compliant tax invoices with live preview</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="tb-btn" onclick="showToast('Draft saved','success')">Save draft</button>
+      <button class="tb-btn success" onclick="showToast('Invoice sent via Email & WhatsApp!','success')">📤 Send</button>
+      <button class="tb-btn primary" onclick="window.open('billswift_invoice_preview.html','_blank')">Open Full Editor ↗</button>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <div class="card-hd"><h2>Invoice details</h2></div>
+        <div class="form-grid fg2">
+          <div class="fld"><label>Invoice number</label><input value="INV-2526-0043" id="mk_invno"/></div>
+          <div class="fld"><label>Status</label><select id="mk_status"><option>Draft</option><option selected>Sent</option><option>Paid</option></select></div>
+          <div class="fld"><label>Invoice date</label><input type="date" value="2026-03-19" id="mk_date" oninput="updateMiniPreview()"/></div>
+          <div class="fld"><label>Due date</label><input type="date" value="2026-04-02" id="mk_due" oninput="updateMiniPreview()"/></div>
+          <div class="fld"><label>Client</label><select id="mk_client" onchange="updateMiniPreview()"><option value="">Select client...</option></select></div>
+          <div class="fld"><label>Place of supply</label><select id="mk_pos"><option value="07">07 – Delhi</option><option value="06" selected>06 – Haryana</option><option value="27">27 – Maharashtra</option><option value="29">29 – Karnataka</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>GST configuration</h2></div>
+        <div class="gst-toggle" id="mk_gst_toggle">
+          <button class="gst-opt" onclick="setMkGst('igst',this)">IGST (Inter-state)</button>
+          <button class="gst-opt on" onclick="setMkGst('cgst',this)">CGST+SGST (Intra-state)</button>
+          <button class="gst-opt" onclick="setMkGst('exempt',this)">Exempt</button>
+        </div>
+        <div class="alert alert-blue" id="mk_gst_info">ℹ Intra-state supply — CGST + SGST will apply</div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>Line items</h2></div>
+        <table class="inv-items-table">
+          <thead><tr><th style="width:35%">Description</th><th style="width:10%">HSN</th><th style="width:8%">Qty</th><th style="width:12%">Rate (₹)</th><th style="width:8%">GST%</th><th style="width:12%">Amount</th><th style="width:4%"></th></tr></thead>
+          <tbody id="mkItemsBody"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addMkItem()">+ Add line item</button>
+        <div class="totals-panel" id="mkTotals"></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="position:sticky;top:0">
+        <div class="card-hd"><h2>Mini preview</h2><span class="card-link" onclick="window.open('billswift_invoice_preview.html','_blank')">Full preview ↗</span></div>
+        <div id="mkPreview" style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:10px"></div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <button class="tb-btn" style="flex:1;font-size:11px;justify-content:center" onclick="showToast('PDF downloading...','info')">⬇ PDF</button>
+          <button class="tb-btn primary" style="flex:1;font-size:11px;justify-content:center" onclick="showToast('Invoice sent!','success')">📤 Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SETTINGS
+════════════════════════════════════════════ -->
+<div class="page" id="page-settings">
+  <div class="mod-hd">
+    <div class="mod-ico" style="background:var(--bg4)"><svg width="20" height="20" viewBox="0 0 16 16" fill="var(--text2)"><path d="M8 5a3 3 0 100 6A3 3 0 008 5zm0 1.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/></svg></div>
+    <div><div class="mod-title">Settings</div><div class="mod-sub">Appearance, notifications, data & security preferences</div></div>
+  </div>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <div class="card-hd"><h2>Appearance</h2></div>
+        <div class="form-grid">
+          <div class="fld"><label>Theme</label><select onchange="showToast('Theme updated','success')"><option>Light (default)</option><option>Dark</option><option>System</option></select></div>
+          <div class="fld"><label>Language</label><select><option>English</option><option>Hindi</option><option>Gujarati</option><option>Tamil</option></select></div>
+          <div class="fld"><label>Date format</label><select><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
+          <div class="fld"><label>Currency display</label><select><option>₹ Indian Rupee</option><option>$ US Dollar</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>Notifications</h2></div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>Invoice due reminders</span><input type="checkbox" checked/></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>Low stock alerts</span><input type="checkbox" checked/></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>Payment received</span><input type="checkbox" checked/></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>GST filing reminders</span><input type="checkbox" checked/></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span>Weekly summary email</span><input type="checkbox"/></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-hd"><h2>Security</h2></div>
+        <div class="form-grid">
+          <div class="fld"><label>Current password</label><input type="password" placeholder="••••••••"/></div>
+          <div class="fld"><label>New password</label><input type="password" placeholder="Min 8 characters"/></div>
+          <div class="fld"><label>Confirm password</label><input type="password" placeholder="Repeat password"/></div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="tb-btn primary" onclick="showToast('Password updated','success')">Update password</button>
+          <button class="tb-btn" onclick="showToast('2FA setup coming soon','info')">Setup 2FA</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h2>Data & backup</h2></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="tb-btn" onclick="showToast('Backup started — you will receive an email','info')" style="justify-content:center">📦 Export full backup</button>
+          <button class="tb-btn" onclick="showToast('Tally XML exported','success')" style="justify-content:center">🔗 Export to Tally</button>
+          <button class="tb-btn" onclick="showToast('Importing data...','info')" style="justify-content:center">📥 Import data</button>
+        </div>
+        <hr class="div">
+        <div style="font-size:11px;color:var(--text3)">Last backup: Today 3:00 AM · Auto-backup: Daily</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /app -->
+
+<!-- ════════════════ MODALS ════════════════ -->
+
+<!-- New Invoice Modal -->
+<div class="modal-bg" id="newInvoiceModal">
+  <div class="modal" style="width:700px">
+    <div class="modal-hd"><span class="modal-title">Create New Invoice</span><button class="modal-close" onclick="closeModal('newInvoiceModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Client *</label><select data-clients></select></div>
+      <div class="fld"><label>Invoice date *</label><input type="date" value="2026-03-19"/></div>
+      <div class="fld"><label>Due date *</label><input type="date" value="2026-04-02"/></div>
+      <div class="fld"><label>GST type</label><select><option>IGST (Inter-state)</option><option>CGST+SGST (Intra-state)</option></select></div>
+      <div class="fld span2"><label>Notes</label><textarea rows="2" placeholder="Thank you for your business!"></textarea></div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--blue-l);border-radius:var(--r);font-size:12px;color:var(--blue)">💡 For full invoice creation with line items and live preview, use the Invoice Maker module.</div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('newInvoiceModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveNewInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-bg" id="addUserModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Add New User</span><button class="modal-close" onclick="closeModal('addUserModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Full name *</label><input placeholder="e.g. Priya Sharma"/></div>
+      <div class="fld"><label>Email *</label><input type="email" placeholder="priya@company.com"/></div>
+      <div class="fld"><label>Phone</label><input placeholder="10-digit mobile number"/></div>
+      <div class="fld"><label>Role *</label><select><option>Viewer</option><option>Sales Exec</option><option>Store Manager</option><option>Finance Manager</option><option>Admin</option></select></div>
+      <div class="fld"><label>Branch</label><select><option>Delhi - Main</option><option>Gurugram</option></select></div>
+      <div class="fld"><label>Temporary password</label><input type="password" value="BillSwift@123"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveNewUser()">Create User</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Item Modal -->
+<div class="modal-bg" id="addItemModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Add New Item / Product</span><button class="modal-close" onclick="closeModal('addItemModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Item name *</label><input placeholder="e.g. Dell Laptop i7"/></div>
+      <div class="fld"><label>SKU</label><input placeholder="e.g. SKU-007" style="font-family:var(--mono)"/></div>
+      <div class="fld"><label>Category</label><select><option>Electronics</option><option>Furniture</option><option>Cables</option><option>Services</option></select></div>
+      <div class="fld"><label>HSN / SAC code</label><input placeholder="e.g. 84713090" style="font-family:var(--mono)"/></div>
+      <div class="fld"><label>Unit</label><select><option>Nos</option><option>Kg</option><option>Ltr</option><option>Mtr</option><option>Box</option><option>Hour</option></select></div>
+      <div class="fld"><label>GST rate</label><select><option>0%</option><option>5%</option><option>12%</option><option selected>18%</option><option>28%</option></select></div>
+      <div class="fld"><label>Purchase rate (₹)</label><input type="number" placeholder="0"/></div>
+      <div class="fld"><label>Sale rate (₹) *</label><input type="number" placeholder="0"/></div>
+      <div class="fld"><label>Opening stock</label><input type="number" placeholder="0"/></div>
+      <div class="fld"><label>Reorder level</label><input type="number" placeholder="0"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('addItemModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveNewItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- New PO Modal -->
+<div class="modal-bg" id="newPOModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Create Purchase Order</span><button class="modal-close" onclick="closeModal('newPOModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Vendor *</label><select data-vendors></select></div>
+      <div class="fld"><label>Order date *</label><input type="date" value="2026-03-19"/></div>
+      <div class="fld"><label>Expected delivery</label><input type="date" value="2026-03-26"/></div>
+      <div class="fld"><label>Deliver to</label><select><option>Delhi Warehouse</option><option>GGN Warehouse</option></select></div>
+      <div class="fld span2"><label>Notes</label><textarea rows="2" placeholder="Special instructions..."></textarea></div>
+    </div>
+    <div class="alert alert-blue" style="margin-top:10px">ℹ Orders up to ₹50,000 are auto-approved. Higher amounts require Finance Manager approval.</div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('newPOModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="closeModal('newPOModal');showToast('PO-090 created & sent to vendor','success')">Create PO</button>
+    </div>
+  </div>
+</div>
+
+<!-- Record Payment Modal -->
+<div class="modal-bg" id="recordPaymentModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Record Payment</span><button class="modal-close" onclick="closeModal('recordPaymentModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Invoice *</label><select data-invoices></select></div>
+      <div class="fld"><label>Amount (₹) *</label><input type="number" value="45500"/></div>
+      <div class="fld"><label>Payment date *</label><input type="date" value="2026-03-19"/></div>
+      <div class="fld"><label>Payment mode *</label><select><option>UPI</option><option>NEFT/RTGS</option><option>Cheque</option><option>Cash</option><option>Card</option></select></div>
+      <div class="fld"><label>Reference / UTR number</label><input placeholder="e.g. UPI/303020192834" style="font-family:var(--mono)"/></div>
+      <div class="fld"><label>Notes</label><input placeholder="Optional notes..."/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('recordPaymentModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="savePayment()">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Adjust Stock Modal -->
+<div class="modal-bg" id="adjustStockModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Adjust Stock</span><button class="modal-close" onclick="closeModal('adjustStockModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld span2"><label>Item *</label><select data-products></select></div>
+      <div class="fld"><label>Warehouse</label><select><option>Delhi Warehouse</option><option>GGN Warehouse</option></select></div>
+      <div class="fld"><label>Adjustment qty (+/-)</label><input type="number" placeholder="e.g. +10 or -5"/></div>
+      <div class="fld"><label>Reason</label><select><option>Physical count</option><option>Damage/Loss</option><option>Return to vendor</option><option>Opening stock</option></select></div>
+      <div class="fld"><label>Notes</label><input placeholder="Optional notes"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('adjustStockModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveStockAdjustment()">Save Adjustment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quote Modal -->
+<div class="modal-bg" id="newQuoteModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">New Quotation</span><button class="modal-close" onclick="closeModal('newQuoteModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Client *</label><select><option value="">Select client...</option></select></div>
+      <div class="fld"><label>Valid until</label><input type="date" value="2026-04-19"/></div>
+      <div class="fld span2"><label>Subject</label><input placeholder="e.g. Quote for IT equipment supply Q2 2026"/></div>
+      <div class="fld span2"><label>Notes</label><textarea rows="2" placeholder="This quotation is valid for 30 days..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('newQuoteModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="closeModal('newQuoteModal');showToast('QT-0025 created & sent to client!','success')">Create Quotation</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Login Modal -->
+<div id="loginModal" style="position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f2942 0%,#1a5fa8 50%,#0d3d6e 100%);">
+  <!-- Animated background dots -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.03);top:-50px;left:-80px"></div>
+    <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.04);bottom:-100px;right:-100px"></div>
+    <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.03);top:40%;left:10%"></div>
+    <!-- Grid pattern -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#grid)"/>
+    </svg>
+  </div>
+
+  <!-- Left panel - branding -->
+  <div style="display:none;width:420px;padding:48px;color:white" id="loginBrandPanel">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:40px">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center">
+        <svg width="22" height="22" viewBox="0 0 16 16" fill="white"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      </div>
+      <span style="font-size:22px;font-weight:700;letter-spacing:-0.5px">BillSwift ERP</span>
+    </div>
+    <h1 style="font-size:32px;font-weight:700;line-height:1.2;margin-bottom:16px">Complete Business Management</h1>
+    <p style="font-size:14px;opacity:0.7;line-height:1.7">Invoicing · Inventory · Procurement · Finance · POS — all in one place.</p>
+  </div>
+
+  <!-- Login card -->
+  <div style="background:white;border-radius:20px;padding:36px 40px;width:420px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,0.4);position:relative">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:52px;height:52px;background:#1a5fa8;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 20px rgba(26,95,168,0.35)">
+        <svg width="26" height="26" viewBox="0 0 16 16" fill="white"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      </div>
+      <div style="font-size:22px;font-weight:700;color:#18170f;letter-spacing:-0.4px">BillSwift ERP</div>
+      <div style="font-size:13px;color:#9a9788;margin-top:4px" id="loginSubtitle">Sign in to your account</div>
+    </div>
+
+    <!-- Login form -->
+    <div id="loginFormView">
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:600;color:#5a5850;display:block;margin-bottom:5px">EMAIL ADDRESS</label>
+        <input type="email" id="loginEmail" placeholder="admin@billswift.in"
+          style="width:100%;padding:11px 14px;border:1.5px solid #dedad0;border-radius:10px;font-size:14px;color:#18170f;background:#fafaf8;font-family:inherit;outline:none;transition:border-color 0.15s"
+          onfocus="this.style.borderColor='#1a5fa8';this.style.background='white'"
+          onblur="this.style.borderColor='#dedad0';this.style.background='#fafaf8'"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div style="margin-bottom:6px">
+        <label style="font-size:11px;font-weight:600;color:#5a5850;display:block;margin-bottom:5px">PASSWORD</label>
+        <input type="password" id="loginPassword" placeholder="Your password"
+          style="width:100%;padding:11px 14px;border:1.5px solid #dedad0;border-radius:10px;font-size:14px;color:#18170f;background:#fafaf8;font-family:inherit;outline:none;transition:border-color 0.15s"
+          onfocus="this.style.borderColor='#1a5fa8';this.style.background='white'"
+          onblur="this.style.borderColor='#dedad0';this.style.background='#fafaf8'"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div id="loginError" style="display:none;margin:10px 0;padding:10px 14px;background:#fde8e8;color:#8a1f1f;border:1px solid #f0b0b0;border-radius:8px;font-size:13px;font-weight:500;text-align:center"></div>
+      <button id="loginBtn" onclick="doLogin()"
+        style="width:100%;margin-top:14px;padding:13px;background:#1a5fa8;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s;letter-spacing:0.2px"
+        onmouseover="this.style.background='#154d8a'"
+        onmouseout="this.style.background='#1a5fa8'">Sign In</button>
+      <div style="text-align:center;margin-top:16px">
+        <span style="font-size:12px;color:#9a9788">New setup? </span>
+        <span style="font-size:12px;color:#1a5fa8;cursor:pointer;font-weight:500" onclick="showSetup()">Create admin account →</span>
+      </div>
+    </div>
+
+    <!-- Setup form -->
+    <div id="setupFormView" style="display:none">
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:600;color:#5a5850;display:block;margin-bottom:5px">YOUR NAME</label>
+        <input id="setupName" placeholder="e.g. Rajesh Kumar"
+          style="width:100%;padding:11px 14px;border:1.5px solid #dedad0;border-radius:10px;font-size:14px;color:#18170f;font-family:inherit;outline:none;background:#fafaf8"
+          onfocus="this.style.borderColor='#1a5fa8'" onblur="this.style.borderColor='#dedad0'"/>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:600;color:#5a5850;display:block;margin-bottom:5px">EMAIL ADDRESS</label>
+        <input type="email" id="setupEmail" placeholder="admin@yourcompany.com"
+          style="width:100%;padding:11px 14px;border:1.5px solid #dedad0;border-radius:10px;font-size:14px;color:#18170f;font-family:inherit;outline:none;background:#fafaf8"
+          onfocus="this.style.borderColor='#1a5fa8'" onblur="this.style.borderColor='#dedad0'"/>
+      </div>
+      <div style="margin-bottom:6px">
+        <label style="font-size:11px;font-weight:600;color:#5a5850;display:block;margin-bottom:5px">PASSWORD</label>
+        <input type="password" id="setupPassword" placeholder="Min 6 characters"
+          style="width:100%;padding:11px 14px;border:1.5px solid #dedad0;border-radius:10px;font-size:14px;color:#18170f;font-family:inherit;outline:none;background:#fafaf8"
+          onfocus="this.style.borderColor='#1a5fa8'" onblur="this.style.borderColor='#dedad0'"
+          onkeydown="if(event.key==='Enter')doRegister()"/>
+      </div>
+      <div id="setupError" style="display:none;margin:10px 0;padding:10px 14px;background:#fde8e8;color:#8a1f1f;border:1px solid #f0b0b0;border-radius:8px;font-size:13px;font-weight:500;text-align:center"></div>
+      <button onclick="doRegister()"
+        style="width:100%;margin-top:14px;padding:13px;background:#2d6a1f;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s"
+        onmouseover="this.style.background='#1f4d14'"
+        onmouseout="this.style.background='#2d6a1f'">Create Admin Account</button>
+      <div style="text-align:center;margin-top:14px">
+        <span style="font-size:12px;color:#1a5fa8;cursor:pointer;font-weight:500" onclick="showLogin()">← Back to sign in</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal-bg" id="addClientModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Add New Client</span><button class="modal-close" onclick="closeModal('addClientModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Company name *</label><input placeholder="e.g. Reliance Industries Ltd"/></div>
+      <div class="fld"><label>GSTIN</label><input placeholder="e.g. 27AABCR1234L1Z5" style="font-family:var(--mono)"/></div>
+      <div class="fld"><label>Email</label><input type="email" placeholder="accounts@company.com"/></div>
+      <div class="fld"><label>Phone</label><input placeholder="10-digit number"/></div>
+      <div class="fld"><label>City</label><input placeholder="e.g. Mumbai"/></div>
+      <div class="fld"><label>State</label><input placeholder="e.g. Maharashtra"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('addClientModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveNewClient()">Add Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Vendor Modal -->
+<div class="modal-bg" id="addVendorModal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Add New Vendor</span><button class="modal-close" onclick="closeModal('addVendorModal')">×</button></div>
+    <div class="form-grid fg2">
+      <div class="fld"><label>Vendor name *</label><input placeholder="e.g. TechZone India Pvt. Ltd."/></div>
+      <div class="fld"><label>GSTIN</label><input placeholder="e.g. 07AABCT1234L1Z5" style="font-family:var(--mono)"/></div>
+      <div class="fld"><label>Phone</label><input placeholder="10-digit number"/></div>
+      <div class="fld"><label>Email</label><input type="email" placeholder="vendor@company.com"/></div>
+      <div class="fld"><label>Category</label><select><option>Electronics</option><option>Furniture</option><option>Cables</option><option>Raw Material</option><option>Services</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tb-btn" onclick="closeModal('addVendorModal')">Cancel</button>
+      <button class="tb-btn primary" onclick="saveNewVendor()">Add Vendor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// BILLSWIFT ERP — FULL STACK PRODUCTION CLIENT
+// ═══════════════════════════════════════════════
+
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:10000/api'
+  : '/api';
+
+// ── Auth State ────────────────────────────────
+let TOKEN = localStorage.getItem('bs_token') || '';
+let CURRENT_USER = JSON.parse(localStorage.getItem('bs_user') || 'null');
+
+// ── In-memory cache ───────────────────────────
+let INVOICES=[], USERS=[], STOCK=[], PO_DATA=[], VENDORS=[], CLIENTS=[], LEDGER=[], AUDIT=[], POS_PRODUCTS=[];
+const ROLES=[
+  {name:'Super Admin',pill:'p-blue',desc:'Full system control'},
+  {name:'Finance Manager',pill:'p-teal',desc:'Invoices, payments, ledger'},
+  {name:'Sales Exec',pill:'p-amber',desc:'Create invoices, quotes'},
+  {name:'Store Manager',pill:'p-purple',desc:'Stock, POS, transfers'},
+  {name:'Viewer',pill:'p-gray',desc:'View reports only'},
+];
+const INTEGRATIONS=[
+  {ico:'📧',name:'Gmail / SMTP',desc:'Send invoices via email',status:'not-set'},
+  {ico:'💬',name:'WhatsApp Business',desc:'Share invoices on WA',status:'not-set'},
+  {ico:'💳',name:'Razorpay',desc:'UPI + card payments',status:'not-set'},
+  {ico:'🏛',name:'GST Portal',desc:'e-Invoice & e-Way bill',status:'not-set'},
+  {ico:'📊',name:'Tally Export',desc:'Export to Tally XML',status:'available'},
+  {ico:'🔗',name:'Webhook / API',desc:'Custom integrations',status:'not-set'},
+];
+const REPORT_CARDS=[
+  {ico:'📄',name:'Sales Report',desc:'Revenue & invoice analysis'},
+  {ico:'🧾',name:'GST Returns',desc:'GSTR-1 & GSTR-3B'},
+  {ico:'📦',name:'Stock Report',desc:'Inventory valuation'},
+  {ico:'💰',name:'P&L Statement',desc:'Profit & loss'},
+  {ico:'🏦',name:'Balance Sheet',desc:'Assets & liabilities'},
+  {ico:'📊',name:'Trial Balance',desc:'Dr/Cr summary'},
+  {ico:'👥',name:'Client Ageing',desc:'Receivables analysis'},
+  {ico:'🚚',name:'Vendor Report',desc:'Purchase analysis'},
+];
+const PILL={paid:'p-green',pending:'p-amber',overdue:'p-red',partial:'p-purple',sent:'p-blue',draft:'p-gray',active:'p-green',inactive:'p-gray',approved:'p-green',grn_done:'p-teal',completed:'p-green',low:'p-red',good:'p-green',warn:'p-amber',connected:'p-green',available:'p-blue','not-set':'p-gray'};
+
+// ═══════════════════════════════════════════════
+// API HELPERS
+// ═══════════════════════════════════════════════
+async function apiFetch(path, opts={}) {
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN, ...(opts.headers||{}) }
+  });
+  if (res.status === 401) { logout(); return null; }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function apiGet(path) { return apiFetch(path); }
+async function apiPost(path, body) { return apiFetch(path, { method:'POST', body: JSON.stringify(body) }); }
+async function apiPut(path, body) { return apiFetch(path, { method:'PUT', body: JSON.stringify(body) }); }
+async function apiDelete(path) { return apiFetch(path, { method:'DELETE' }); }
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+async function login(email, password) {
+  const data = await apiPost('/auth/login', { email, password });
+  if (!data) return;
+  TOKEN = data.token;
+  CURRENT_USER = data.user;
+  localStorage.setItem('bs_token', TOKEN);
+  localStorage.setItem('bs_user', JSON.stringify(CURRENT_USER));
+  hideLoginModal();
+  updateSidebarUser();
+  loadAllData();
+  showToast('Welcome back, ' + CURRENT_USER.name + '!', 'success');
+}
+
+function logout() {
+  TOKEN = '';
+  CURRENT_USER = null;
+  localStorage.removeItem('bs_token');
+  localStorage.removeItem('bs_user');
+  showLoginModal();
+}
+
+function updateSidebarUser() {
+  if (!CURRENT_USER) return;
+  const initials = CURRENT_USER.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.querySelector('.u-avatar').textContent = initials;
+  document.querySelector('.u-name').textContent = CURRENT_USER.name;
+  document.querySelector('.u-role').textContent = CURRENT_USER.role;
+}
+
+function showLoginModal() {
+  document.getElementById('loginModal').style.display = 'flex';
+  document.getElementById('mainApp').classList.add('app-locked');
+}
+function hideLoginModal() {
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('mainApp').classList.remove('app-locked');
+}
+
+// ═══════════════════════════════════════════════
+// LOAD ALL DATA
+// ═══════════════════════════════════════════════
+async function loadAllData() {
+  try {
+    showLoader(true);
+    const [users, products, invoices, vendors, clients, po, audit, dashboard] = await Promise.all([
+      apiGet('/users'),
+      apiGet('/products'),
+      apiGet('/invoices'),
+      apiGet('/procurement/vendors'),
+      apiGet('/clients'),
+      apiGet('/procurement/po'),
+      apiGet('/finance/audit'),
+      apiGet('/dashboard')
+    ]);
+
+    if (users) { USERS.length=0; users.forEach(u=>USERS.push(u)); }
+    if (products) { STOCK.length=0; POS_PRODUCTS.length=0; products.forEach(p=>{ STOCK.push(p); POS_PRODUCTS.push({id:p.id,name:p.name,sku:p.sku,rate:p.sale_rate,gst:p.gst_rate}); }); }
+    if (invoices) { INVOICES.length=0; invoices.forEach(i=>INVOICES.push(i)); }
+    if (vendors) { VENDORS.length=0; vendors.forEach(v=>VENDORS.push(v)); }
+    if (clients) { CLIENTS.length=0; clients.forEach(c=>CLIENTS.push(c)); }
+    if (po) { PO_DATA.length=0; po.forEach(p=>PO_DATA.push(p)); }
+    if (audit) { AUDIT.length=0; audit.forEach(a=>AUDIT.push(a)); }
+    if (dashboard) updateDashboardKPIs(dashboard);
+
+    renderAll();
+    updateSidebarUser();
+    showLoader(false);
+  } catch(e) {
+    showLoader(false);
+    showToast('Error loading data: ' + e.message, 'error');
+  }
+}
+
+function showLoader(show) {
+  let el = document.getElementById('globalLoader');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'globalLoader';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;height:3px;background:var(--blue);z-index:9999;transition:opacity 0.3s;animation:loadProgress 1.5s ease infinite';
+    document.body.appendChild(el);
+    const style = document.createElement('style');
+    style.textContent = '@keyframes loadProgress{0%{transform:scaleX(0);transform-origin:left}50%{transform:scaleX(0.7)}100%{transform:scaleX(1);transform-origin:right;opacity:0}}';
+    document.head.appendChild(style);
+  }
+  el.style.display = show ? 'block' : 'none';
+}
+
+function updateDashboardKPIs(d) {
+  const fmt = v => '₹' + (v/100000).toFixed(1) + 'L';
+  const kpis = document.querySelectorAll('.kpi-val');
+  if (kpis[0]) kpis[0].textContent = fmt(d.total_revenue || 0);
+  if (kpis[1]) kpis[1].textContent = fmt(d.outstanding || 0);
+  if (kpis[2]) kpis[2].textContent = '₹' + ((d.stock_value||0)/100000).toFixed(1) + 'L';
+  if (kpis[4]) kpis[4].textContent = d.active_clients || 0;
+}
+
+function renderAll() {
+  renderInvoiceTable('dashInvTable', INVOICES.slice(0,5));
+  renderInvoiceTable('salesInvTable', INVOICES);
+  renderUserTable();
+  renderRoles();
+  renderIntegrations();
+  renderAuditTable();
+  renderStockTable();
+  renderCatBreakdown();
+  renderPOTable();
+  renderVendorList();
+  renderReportCards();
+  renderPosCatalog();
+  renderMkItems();
+  updateAdminStats();
+  updateInventoryStats();
+  populateClientDropdowns();
+  populateVendorDropdowns();
+  populateInvoiceDropdowns();
+  populateProductDropdowns();
+}
+
+// ═══════════════════════════════════════════════
+// DROPDOWN POPULATION
+// ═══════════════════════════════════════════════
+function populateClientDropdowns() {
+  const opts = CLIENTS.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.querySelectorAll('select[data-clients]').forEach(sel => {
+    const blank = '<option value="">Select client...</option>';
+    sel.innerHTML = blank + opts;
+  });
+  document.getElementById('mk_client').innerHTML = '<option value="">Select client...</option>' + opts;
+}
+
+function populateVendorDropdowns() {
+  const opts = VENDORS.map(v=>`<option value="${v.id}">${v.name}</option>`).join('');
+  document.querySelectorAll('select[data-vendors]').forEach(sel => {
+    sel.innerHTML = '<option value="">Select vendor...</option>' + opts;
+  });
+}
+
+function populateInvoiceDropdowns() {
+  const pending = INVOICES.filter(i=>['pending','overdue','partial'].includes(i.status));
+  const opts = pending.map(i=>`<option value="${i.id}">${i.invoice_no} — ${i.client_name} (₹${Number(i.total).toLocaleString('en-IN')})</option>`).join('');
+  document.querySelectorAll('select[data-invoices]').forEach(sel => {
+    sel.innerHTML = '<option value="">Select invoice...</option>' + opts;
+  });
+}
+
+function populateProductDropdowns() {
+  const opts = STOCK.map(p=>`<option value="${p.id}">${p.sku} · ${p.name}</option>`).join('');
+  document.querySelectorAll('select[data-products]').forEach(sel => {
+    sel.innerHTML = '<option value="">Select product...</option>' + opts;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const topTitles = {
+  dashboard:'Dashboard',admin:'Admin Panel',inventory:'Inventory Management',procurement:'Procurement',
+  sales:'Sales & Distribution',retail:'Retail / POS Terminal',finance:'Finance & Accounts',
+  reports:'Reports & Analytics',invoice_maker:'Invoice Maker',settings:'Settings',
+};
+const topBtns = {
+  dashboard:'+ New Invoice',admin:'+ Add User',inventory:'+ Add Item',procurement:'+ New PO',
+  sales:'+ New Invoice',retail:'Close Day',finance:'+ Record Payment',
+  reports:'⬇ Export All',invoice_maker:'📤 Send Invoice',settings:'Save Settings',
+};
+
+function goto(module, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page = document.getElementById('page-'+module);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topTitle').textContent = topTitles[module] || module;
+  document.getElementById('topActionBtn').textContent = topBtns[module] || '+ New';
+  if (module === 'admin') loadAuditLog();
+}
+
+// ═══════════════════════════════════════════════
+// TABS & MODALS
+// ═══════════════════════════════════════════════
+function switchTab(el, targetId) {
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['a1','a2','a3','a4','p1','p2','p3','p4','s1','s2','s3','s4','f1','f2','f3','f4'].forEach(id=>{
+    const e=document.getElementById(id); if(e) e.style.display='none';
+  });
+  const t=document.getElementById(targetId); if(t) t.style.display='block';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open'); });
+});
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg, type='info') {
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  const icons={success:'✓',error:'✕',info:'ℹ'};
+  t.innerHTML=`<span>${icons[type]||'ℹ'}</span>${msg}`;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(100%)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); },3500);
+}
+
+// ═══════════════════════════════════════════════
+// TOP ACTION BUTTON
+// ═══════════════════════════════════════════════
+function handleTopAction() {
+  const active=document.querySelector('.nav-item.active');
+  const module=active?.getAttribute('onclick')?.match(/'(\w+)'/)?.[1]||'dashboard';
+  const modalMap={dashboard:'newInvoiceModal',admin:'addUserModal',inventory:'addItemModal',procurement:'newPOModal',finance:'recordPaymentModal',sales:'newInvoiceModal'};
+  const modal=modalMap[module];
+  if(modal) openModal(modal);
+  else if(module==='retail') showToast('Session closed. Report generated.','success');
+  else if(module==='reports') showToast('Exporting all reports...','info');
+  else if(module==='settings') saveCompanySettings();
+  else if(module==='invoice_maker') showToast('Invoice sent!','success');
+  else openModal('newInvoiceModal');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════════
+function fmt(n) { return '₹'+(parseFloat(n)||0).toLocaleString('en-IN'); }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'}) : '—'; }
+
+function renderInvoiceTable(tbodyId, data) {
+  const tbody=document.getElementById(tbodyId);
+  if(!tbody) return;
+  if(!data.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No invoices yet — click "+ New Invoice" to create one</td></tr>'; return; }
+  tbody.innerHTML=data.map(inv=>`
+    <tr>
+      <td class="mono">${inv.invoice_no||inv.no||'—'}</td>
+      <td>${inv.client_name||inv.client||'—'}</td>
+      <td>${fmtDate(inv.invoice_date||inv.date)}</td>
+      ${inv.due_date!==undefined?`<td>${fmtDate(inv.due_date||inv.due)}</td>`:''}
+      <td style="font-weight:500">${fmt(inv.total||inv.amt)}</td>
+      <td style="color:var(--text3)">${fmt(inv.gst_amount||inv.gst)}</td>
+      <td><span class="pill ${PILL[inv.status]||'p-gray'}">${(inv.status||'draft').charAt(0).toUpperCase()+(inv.status||'draft').slice(1)}</span></td>
+      <td><div class="actions">
+        <span style="color:var(--blue);cursor:pointer;font-size:11px" onclick="markInvoicePaid('${inv.id}')">Mark Paid</span>
+        <span style="color:var(--blue);cursor:pointer;font-size:11px" onclick="showToast('PDF generating...','info')">PDF</span>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderUserTable() {
+  const tbody=document.getElementById('userTable');
+  if(!USERS.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">No users yet — click "+ Add User" to create one</td></tr>'; return; }
+  tbody.innerHTML=USERS.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--blue)">${(u.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}</div>
+        <span style="font-weight:500">${u.name}</span>
+      </div></td>
+      <td><span class="pill ${u.role?.includes('Admin')?'p-blue':u.role?.includes('Finance')?'p-teal':u.role?.includes('Sales')?'p-amber':u.role?.includes('Store')?'p-purple':'p-gray'}">${u.role||'Viewer'}</span></td>
+      <td>${u.branch||'—'}</td>
+      <td style="color:var(--text3)">${u.last_login?fmtDate(u.last_login):'Never'}</td>
+      <td><span class="pill ${u.is_active!==false?'p-green':'p-gray'}">${u.is_active!==false?'Active':'Inactive'}</span></td>
+      <td><div class="actions">
+        <span style="color:var(--blue);cursor:pointer;font-size:11px" onclick="toggleUser('${u.id}',${!u.is_active})">${u.is_active?'Deactivate':'Activate'}</span>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderStockTable() {
+  const tbody=document.getElementById('stockBody');
+  if(!STOCK.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No items yet — click "+ Add Item" to add your first product</td></tr>'; return; }
+  tbody.innerHTML=STOCK.map(s=>{
+    const pct=s.reorder_level?Math.min(100,Math.round((s.qty/Math.max(s.reorder_level*3,1))*100)):50;
+    const status=s.qty<=0?'low':s.qty<=s.reorder_level?'warn':'good';
+    return `<tr>
+      <td class="mono">${s.sku}</td>
+      <td style="font-weight:500">${s.name}</td>
+      <td><span class="pill p-gray">${s.category||'—'}</span></td>
+      <td style="font-weight:600;color:${status==='low'?'var(--red)':status==='warn'?'var(--amber)':'var(--text)'}">${s.qty}</td>
+      <td style="color:var(--text3)">${s.reorder_level}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div class="stock-bar-wrap"><div class="stock-bar" style="width:${pct}%;background:${pct<20?'var(--red)':pct<40?'var(--amber)':'var(--blue)'}"></div></div>
+        <span style="font-size:10px;color:${pct<20?'var(--red)':pct<40?'var(--amber)':'var(--green)'}">${pct}%</span>
+      </div></td>
+      <td style="font-weight:500">${fmt(s.qty*s.sale_rate)}</td>
+      <td><span class="pill ${status==='low'?'p-red':status==='warn'?'p-amber':'p-green'}">${status==='low'?'Low':status==='warn'?'Warning':'Good'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAuditTable() {
+  const tbody=document.getElementById('auditTable');
+  if(!AUDIT.length){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No audit logs yet</td></tr>'; return; }
+  tbody.innerHTML=AUDIT.map(a=>`
+    <tr>
+      <td class="mono" style="white-space:nowrap">${fmtDate(a.created_at)}</td>
+      <td>${a.user_name||'System'}</td>
+      <td>${a.action}</td>
+      <td><span class="pill p-blue">${a.module||'System'}</span></td>
+      <td class="mono" style="color:var(--text3)">${a.ip||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderPOTable() {
+  const tbody=document.getElementById('poTable');
+  if(!PO_DATA.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No purchase orders yet — click "+ New PO" to create one</td></tr>'; return; }
+  tbody.innerHTML=PO_DATA.map(p=>`
+    <tr>
+      <td class="mono">${p.po_no}</td>
+      <td>${p.vendor_name||'—'}</td>
+      <td>—</td>
+      <td style="font-weight:500">${fmt(p.total)}</td>
+      <td style="color:var(--text3)">${fmtDate(p.expected_date)}</td>
+      <td><span class="pill ${PILL[p.status]||'p-gray'}">${(p.status||'').replace('_',' ')}</span></td>
+      <td><div class="actions">
+        <span style="color:var(--blue);cursor:pointer;font-size:11px" onclick="showToast('Opening PO...','info')">View</span>
+        ${p.status==='pending'?`<span style="color:var(--green);cursor:pointer;font-size:11px" onclick="approvePO('${p.id}')">Approve</span>`:''}
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderVendorList() {
+  const div=document.getElementById('vendorList');
+  if(!VENDORS.length){ div.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)">No vendors yet</div>'; return; }
+  const colors=['var(--blue)','var(--green)','var(--amber)','var(--teal)','var(--purple)'];
+  div.innerHTML=VENDORS.slice(0,6).map((v,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <div style="width:10px;height:10px;border-radius:2px;background:${colors[i%colors.length]};flex-shrink:0"></div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:500">${v.name}</div><div style="font-size:10px;color:var(--text3)">${v.type||'Vendor'}</div></div>
+      <div style="font-size:12px;font-weight:600">${fmt(v.total_business)}</div>
+    </div>
+  `).join('');
+}
+
+function renderRoles() {
+  const panel=document.getElementById('rolesPanel');
+  panel.innerHTML=ROLES.map(r=>`
+    <div style="padding:10px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all 0.12s" onmouseover="this.style.borderColor='var(--blue-m)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;font-weight:500">${r.name}</span>
+        <span class="pill ${r.pill}">${r.desc.split(' ')[0]}</span>
+      </div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${r.desc}</div>
+    </div>
+  `).join('');
+}
+
+function renderIntegrations() {
+  const grid=document.getElementById('integrationsGrid');
+  grid.innerHTML=INTEGRATIONS.map(i=>`
+    <div class="card card-sm" style="text-align:center;cursor:pointer" onclick="showToast('${i.name} settings opening...','info')">
+      <div style="font-size:22px;margin-bottom:6px">${i.ico}</div>
+      <div style="font-size:12px;font-weight:500;margin-bottom:3px">${i.name}</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">${i.desc}</div>
+      <span class="pill ${PILL[i.status]||'p-gray'}">${i.status.charAt(0).toUpperCase()+i.status.slice(1)}</span>
+    </div>
+  `).join('');
+}
+
+function renderCatBreakdown() {
+  const div=document.getElementById('catBreakdown');
+  const cats={};
+  STOCK.forEach(p=>{ const c=p.category||'Other'; cats[c]=(cats[c]||0)+p.qty*p.sale_rate; });
+  const total=Object.values(cats).reduce((a,b)=>a+b,0)||1;
+  const colors=['var(--blue)','var(--teal)','var(--amber)','var(--purple)','var(--green)'];
+  const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!entries.length){ div.innerHTML='<div style="text-align:center;color:var(--text3);font-size:12px">Add inventory items to see breakdown</div>'; return; }
+  div.innerHTML=entries.map(([cat,val],i)=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+        <span>${cat}</span><span style="font-weight:500">${fmt(val)} (${Math.round(val/total*100)}%)</span>
+      </div>
+      <div class="prog-wrap"><div class="prog" style="width:${Math.round(val/total*100)}%;background:${colors[i%colors.length]}"></div></div>
+    </div>
+  `).join('');
+}
+
+function renderReportCards() {
+  const div=document.getElementById('reportCards');
+  div.innerHTML=REPORT_CARDS.map(r=>`
+    <div class="report-card" onclick="showToast('Opening ${r.name}...','info')">
+      <div class="rc-ico">${r.ico}</div>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-desc">${r.desc}</div>
+    </div>
+  `).join('');
+}
+
+function updateAdminStats() {
+  const els=document.querySelectorAll('#page-admin .m-val');
+  if(els[0]) els[0].textContent=USERS.length;
+  if(els[1]) els[1].textContent=USERS.filter(u=>u.is_active!==false).length;
+}
+
+function updateInventoryStats() {
+  const low=STOCK.filter(s=>s.qty<=s.reorder_level).length;
+  const badge=document.querySelector('.nav-item[onclick*=inventory] .nav-badge');
+  if(badge){ badge.textContent=low||''; badge.style.display=low?'':'none'; }
+  const els=document.querySelectorAll('#page-inventory .m-val');
+  if(els[0]) els[0].textContent=STOCK.length;
+  if(els[2]&&low) { els[2].textContent=low; els[2].style.color='var(--red)'; }
+}
+
+async function loadAuditLog() {
+  const data = await apiGet('/finance/audit');
+  if(data){ AUDIT.length=0; data.forEach(a=>AUDIT.push(a)); renderAuditTable(); }
+}
+
+// ═══════════════════════════════════════════════
+// SAVE ACTIONS
+// ═══════════════════════════════════════════════
+
+// ── Add User ──────────────────────────────────
+async function saveNewUser() {
+  const modal=document.getElementById('addUserModal');
+  const inputs=modal.querySelectorAll('input,select');
+  const name=inputs[0].value.trim();
+  const email=inputs[1].value.trim();
+  const phone=inputs[2].value.trim();
+  const role=inputs[3].value;
+  const branch=inputs[4].value;
+  const password=inputs[5].value||'BillSwift@123';
+  if(!name){ showToast('Please enter full name','error'); return; }
+  if(!email||!email.includes('@')){ showToast('Please enter valid email','error'); return; }
+  try {
+    const user=await apiPost('/users',{name,email,phone,role,branch,password});
+    USERS.push(user);
+    inputs.forEach(i=>{ if(i.tagName==='INPUT') i.value=''; });
+    closeModal('addUserModal');
+    renderUserTable();
+    updateAdminStats();
+    showToast('User '+name+' created successfully!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Add Client ────────────────────────────────
+async function saveNewClient() {
+  const modal=document.getElementById('addClientModal');
+  const inputs=modal.querySelectorAll('input,select,textarea');
+  const name=inputs[0].value.trim();
+  const gstin=inputs[1].value.trim();
+  const email=inputs[2].value.trim();
+  const phone=inputs[3].value.trim();
+  const city=inputs[4].value.trim();
+  const state=inputs[5].value.trim();
+  if(!name){ showToast('Client name required','error'); return; }
+  try {
+    const client=await apiPost('/clients',{name,gstin,email,phone,city,state});
+    CLIENTS.push(client);
+    inputs.forEach(i=>{ if(i.tagName==='INPUT') i.value=''; });
+    closeModal('addClientModal');
+    populateClientDropdowns();
+    showToast('Client '+name+' added!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Add Inventory Item ────────────────────────
+async function saveNewItem() {
+  const modal=document.getElementById('addItemModal');
+  const inputs=modal.querySelectorAll('input,select');
+  const name=inputs[0].value.trim();
+  const sku=inputs[1].value.trim();
+  const category=inputs[2].value;
+  const hsn=inputs[3].value.trim();
+  const unit=inputs[4].value;
+  const gst_rate=parseFloat(inputs[5].value)||18;
+  const purchase_rate=parseFloat(inputs[6].value)||0;
+  const sale_rate=parseFloat(inputs[7].value)||0;
+  const qty=parseInt(inputs[8].value)||0;
+  const reorder_level=parseInt(inputs[9].value)||10;
+  if(!name){ showToast('Item name required','error'); return; }
+  if(!sale_rate){ showToast('Sale rate required','error'); return; }
+  try {
+    const item=await apiPost('/products',{name,sku,category,hsn,unit,gst_rate,purchase_rate,sale_rate,qty,reorder_level});
+    STOCK.push(item);
+    POS_PRODUCTS.push({id:item.id,name:item.name,sku:item.sku,rate:item.sale_rate,gst:item.gst_rate});
+    inputs.forEach(i=>{ if(i.tagName==='INPUT') i.value=''; });
+    closeModal('addItemModal');
+    renderStockTable();
+    renderPosCatalog();
+    updateInventoryStats();
+    populateProductDropdowns();
+    showToast(name+' added to inventory!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Create Invoice ────────────────────────────
+async function saveNewInvoice() {
+  const modal=document.getElementById('newInvoiceModal');
+  const clientSel=modal.querySelector('select[data-clients]');
+  const dateFld=modal.querySelectorAll('input[type=date]')[0];
+  const dueFld=modal.querySelectorAll('input[type=date]')[1];
+  const gstSel=modal.querySelector('select');
+  const notesFld=modal.querySelector('textarea');
+  const clientId=clientSel.value;
+  const client=CLIENTS.find(c=>c.id===clientId);
+  if(!clientId||!client){ showToast('Please select a client','error'); return; }
+  const gstType=gstSel.value.includes('IGST')?'igst':gstSel.value.includes('Exempt')?'exempt':'cgst';
+  try {
+    const inv=await apiPost('/invoices',{
+      client_id:clientId, client_name:client.name,
+      invoice_date:dateFld.value, due_date:dueFld.value,
+      gst_type:gstType, notes:notesFld.value,
+      items:[{description:'Services',qty:1,rate:1000,gst_rate:18}],
+      status:'draft'
+    });
+    INVOICES.unshift(inv);
+    closeModal('newInvoiceModal');
+    renderInvoiceTable('dashInvTable',INVOICES.slice(0,5));
+    renderInvoiceTable('salesInvTable',INVOICES);
+    populateInvoiceDropdowns();
+    showToast('Invoice '+inv.invoice_no+' created! Open Invoice Maker to add line items.','success');
+    goto('invoice_maker', document.querySelector('[onclick*=invoice_maker]'));
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Create PO ─────────────────────────────────
+async function saveNewPO() {
+  const modal=document.getElementById('newPOModal');
+  const vendorSel=modal.querySelector('select[data-vendors]');
+  const dateFld=modal.querySelectorAll('input[type=date]')[0];
+  const expFld=modal.querySelectorAll('input[type=date]')[1];
+  const warehouseSel=modal.querySelectorAll('select')[1];
+  const notesFld=modal.querySelector('textarea');
+  const vendorId=vendorSel.value;
+  const vendor=VENDORS.find(v=>v.id===vendorId);
+  if(!vendorId||!vendor){ showToast('Please select a vendor','error'); return; }
+  try {
+    const po=await apiPost('/procurement/po',{
+      vendor_id:vendorId, vendor_name:vendor.name,
+      order_date:dateFld.value, expected_date:expFld.value,
+      warehouse:warehouseSel.value, notes:notesFld.value,
+      items:[{description:'Items',qty:1,rate:1000}]
+    });
+    PO_DATA.unshift(po);
+    closeModal('newPOModal');
+    renderPOTable();
+    renderVendorList();
+    if(po.auto_approved) showToast(po.po_no+' created & auto-approved (under ₹50K)!','success');
+    else showToast(po.po_no+' created — pending approval (above ₹50K)','info');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Record Payment ────────────────────────────
+async function savePayment() {
+  const modal=document.getElementById('recordPaymentModal');
+  const invSel=modal.querySelector('select[data-invoices]');
+  const amtFld=modal.querySelector('input[type=number]');
+  const dateFld=modal.querySelector('input[type=date]');
+  const modeSel=modal.querySelectorAll('select')[1];
+  const refFld=modal.querySelectorAll('input')[1];
+  const invId=invSel.value;
+  const inv=INVOICES.find(i=>i.id===invId);
+  if(!amtFld.value){ showToast('Amount required','error'); return; }
+  try {
+    await apiPost('/finance/payments',{
+      invoice_id:invId||null, invoice_no:inv?.invoice_no, client_name:inv?.client_name,
+      amount:parseFloat(amtFld.value), payment_date:dateFld.value,
+      mode:modeSel.value, reference:refFld.value
+    });
+    if(inv){ inv.status='paid'; inv.paid_amount=inv.total; }
+    closeModal('recordPaymentModal');
+    renderInvoiceTable('dashInvTable',INVOICES.slice(0,5));
+    renderInvoiceTable('salesInvTable',INVOICES);
+    showToast('Payment of ₹'+parseFloat(amtFld.value).toLocaleString('en-IN')+' recorded!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Adjust Stock ──────────────────────────────
+async function saveStockAdjustment() {
+  const modal=document.getElementById('adjustStockModal');
+  const productSel=modal.querySelector('select[data-products]');
+  const qtyFld=modal.querySelectorAll('input')[0];
+  const reasonSel=modal.querySelectorAll('select')[1];
+  const notesFld=modal.querySelectorAll('input')[1];
+  const productId=productSel.value;
+  if(!productId){ showToast('Please select a product','error'); return; }
+  if(!qtyFld.value){ showToast('Quantity required','error'); return; }
+  try {
+    const updated=await apiPost('/products/'+productId+'/adjust',{
+      qty:parseInt(qtyFld.value), reason:reasonSel.value, notes:notesFld.value
+    });
+    const idx=STOCK.findIndex(p=>p.id===productId);
+    if(idx>=0) STOCK[idx]=updated;
+    closeModal('adjustStockModal');
+    renderStockTable();
+    updateInventoryStats();
+    showToast('Stock adjusted successfully!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Toggle User Active ────────────────────────
+async function toggleUser(id, newActive) {
+  try {
+    await apiPut('/users/'+id, {is_active:newActive});
+    const u=USERS.find(u=>u.id===id);
+    if(u) u.is_active=newActive;
+    renderUserTable();
+    updateAdminStats();
+    showToast('User '+(newActive?'activated':'deactivated'),'success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Mark Invoice Paid ─────────────────────────
+async function markInvoicePaid(id) {
+  try {
+    await apiPut('/invoices/'+id+'/status',{status:'paid'});
+    const inv=INVOICES.find(i=>i.id===id);
+    if(inv) inv.status='paid';
+    renderInvoiceTable('dashInvTable',INVOICES.slice(0,5));
+    renderInvoiceTable('salesInvTable',INVOICES);
+    showToast('Invoice marked as paid!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Approve PO ────────────────────────────────
+async function approvePO(id) {
+  try {
+    await apiPut('/procurement/po/'+id+'/status',{status:'approved'});
+    const po=PO_DATA.find(p=>p.id===id);
+    if(po) po.status='approved';
+    renderPOTable();
+    showToast('PO approved!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ── Add Vendor ────────────────────────────────
+async function saveNewVendor() {
+  const modal=document.getElementById('addVendorModal');
+  if(!modal) return;
+  const inputs=modal.querySelectorAll('input,select');
+  const name=inputs[0].value.trim();
+  if(!name){ showToast('Vendor name required','error'); return; }
+  try {
+    const vendor=await apiPost('/procurement/vendors',{
+      name, gstin:inputs[1].value.trim(), phone:inputs[2].value.trim(),
+      email:inputs[3].value.trim(), type:inputs[4]?.value
+    });
+    VENDORS.push(vendor);
+    inputs.forEach(i=>{ if(i.tagName==='INPUT') i.value=''; });
+    closeModal('addVendorModal');
+    renderVendorList();
+    populateVendorDropdowns();
+    showToast('Vendor '+name+' added!','success');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════
+// POS TERMINAL
+// ═══════════════════════════════════════════════
+let cart=[], payMode='upi';
+
+function renderPosCatalog(filter='') {
+  const div=document.getElementById('posCatalog');
+  const filtered=POS_PRODUCTS.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase())||p.sku.toLowerCase().includes(filter));
+  if(!filtered.length){ div.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text3)">'+(!POS_PRODUCTS.length?'Add products in Inventory to sell here':'No products found')+'</div>'; return; }
+  div.innerHTML=filtered.map(p=>`
+    <div class="pos-product" onclick="addToCart('${p.id}')">
+      <div class="pp-name">${p.name}</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:4px;font-family:var(--mono)">${p.sku}</div>
+      <div class="pp-rate">₹${parseFloat(p.rate).toLocaleString('en-IN')}</div>
+      <div class="pp-gst">GST ${p.gst}%</div>
+    </div>
+  `).join('');
+}
+
+function filterPosProducts(v){ renderPosCatalog(v); }
+
+function addToCart(id) {
+  const product=POS_PRODUCTS.find(p=>p.id===id);
+  if(!product) return;
+  const existing=cart.find(c=>c.id===id);
+  if(existing) existing.qty++;
+  else cart.push({...product,qty:1});
+  renderCart();
+  showToast(product.name+' added','success');
+}
+
+function renderCart() {
+  const div=document.getElementById('cartItems');
+  const totDiv=document.getElementById('cartTotals');
+  const chargeBtn=document.getElementById('chargeBtn');
+  const countEl=document.getElementById('cartCount');
+  if(!cart.length){
+    div.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">Add items from the catalog →</div>';
+    totDiv.innerHTML='<div class="pos-tot-row"><span>Subtotal</span><span>₹0.00</span></div><div class="pos-tot-row"><span>GST</span><span>₹0.00</span></div><div class="pos-tot-row grand"><span>Total</span><span id="cartGrand">₹0.00</span></div>';
+    chargeBtn.textContent='Charge ₹0.00'; chargeBtn.disabled=true; countEl.textContent='0 items'; return;
+  }
+  div.innerHTML=cart.map(item=>{
+    const base=item.qty*parseFloat(item.rate), tax=base*parseFloat(item.gst)/100;
+    return `<div class="cart-item">
+      <div style="flex:1"><div class="ci-name">${item.name}</div><div style="font-size:10px;color:var(--text3)">₹${parseFloat(item.rate).toLocaleString('en-IN')} × ${item.qty}</div></div>
+      <div class="ci-qty">
+        <button onclick="changeQty('${item.id}',-1)">−</button>
+        <span>${item.qty}</span>
+        <button onclick="changeQty('${item.id}',1)">+</button>
+      </div>
+      <div class="ci-total">₹${(base+tax).toLocaleString('en-IN',{minimumFractionDigits:0})}</div>
+      <button class="ci-del" onclick="removeFromCart('${item.id}')">×</button>
+    </div>`;
+  }).join('');
+  let sub=0,tax=0;
+  cart.forEach(i=>{ const b=i.qty*parseFloat(i.rate); sub+=b; tax+=b*parseFloat(i.gst)/100; });
+  const grand=sub+tax;
+  totDiv.innerHTML=`<div class="pos-tot-row"><span>Subtotal</span><span>₹${sub.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></div><div class="pos-tot-row"><span>GST</span><span>₹${tax.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></div><div class="pos-tot-row grand"><span>Total</span><span>₹${grand.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></div>`;
+  chargeBtn.textContent=`Charge ₹${grand.toLocaleString('en-IN',{minimumFractionDigits:2})}`;
+  chargeBtn.disabled=false;
+  countEl.textContent=`${cart.reduce((s,i)=>s+i.qty,0)} items`;
+}
+
+function changeQty(id,delta){ const item=cart.find(c=>c.id===id); if(!item) return; item.qty+=delta; if(item.qty<=0) cart=cart.filter(c=>c.id!==id); renderCart(); }
+function removeFromCart(id){ cart=cart.filter(c=>c.id!==id); renderCart(); }
+function selectPayMode(el,mode){ payMode=mode; document.querySelectorAll('.pay-mode').forEach(m=>m.classList.remove('on')); el.classList.add('on'); }
+function processSale(){ if(!cart.length) return; let sub=0,tax=0; cart.forEach(i=>{ const b=i.qty*parseFloat(i.rate); sub+=b; tax+=b*parseFloat(i.gst)/100; }); showToast(`Sale of ₹${(sub+tax).toLocaleString('en-IN',{minimumFractionDigits:0})} via ${payMode.toUpperCase()} processed!`,'success'); cart=[]; renderCart(); }
+
+// ═══════════════════════════════════════════════
+// INVOICE MAKER
+// ═══════════════════════════════════════════════
+let mkItems=[{desc:'',hsn:'',qty:1,rate:0,gst:18}], mkGstType='cgst';
+
+function addMkItem(){ mkItems.push({desc:'',hsn:'',qty:1,rate:0,gst:18}); renderMkItems(); }
+
+function renderMkItems(){
+  const body=document.getElementById('mkItemsBody');
+  body.innerHTML=mkItems.map((item,i)=>{
+    const base=(item.qty||0)*(item.rate||0), tax=mkGstType==='exempt'?0:base*(item.gst||0)/100;
+    return `<tr>
+      <td><input value="${item.desc}" placeholder="Description" oninput="mkItems[${i}].desc=this.value;renderMkTotals()"/></td>
+      <td><input value="${item.hsn}" oninput="mkItems[${i}].hsn=this.value" style="font-family:var(--mono);font-size:10px"/></td>
+      <td><input type="number" value="${item.qty}" min="0" oninput="mkItems[${i}].qty=+this.value;renderMkTotals()"/></td>
+      <td><input type="number" value="${item.rate}" min="0" oninput="mkItems[${i}].rate=+this.value;renderMkTotals()"/></td>
+      <td><select onchange="mkItems[${i}].gst=+this.value;renderMkTotals()">${[0,5,12,18,28].map(r=>`<option value="${r}"${r===item.gst?' selected':''}>${r}%</option>`).join('')}</select></td>
+      <td style="font-family:var(--mono);font-size:11px;font-weight:500;text-align:right">₹${(base+tax).toLocaleString('en-IN')}</td>
+      <td><button class="row-del" onclick="mkItems.splice(${i},1);renderMkItems()">×</button></td>
+    </tr>`;
+  }).join('');
+  renderMkTotals();
+}
+
+function renderMkTotals(){
+  let sub=0,tax=0;
+  mkItems.forEach(item=>{ const b=(item.qty||0)*(item.rate||0); sub+=b; tax+=mkGstType==='exempt'?0:b*(item.gst||0)/100; });
+  const grand=Math.round(sub+tax);
+  document.getElementById('mkTotals').innerHTML=`
+    <div class="tot-row"><span>Subtotal</span><span class="tot-val">₹${sub.toLocaleString('en-IN')}</span></div>
+    ${mkGstType==='igst'?`<div class="tot-row"><span>IGST</span><span class="tot-val">₹${tax.toLocaleString('en-IN')}</span></div>`:''}
+    ${mkGstType==='cgst'?`<div class="tot-row"><span>CGST</span><span class="tot-val">₹${(tax/2).toLocaleString('en-IN')}</span></div><div class="tot-row"><span>SGST</span><span class="tot-val">₹${(tax/2).toLocaleString('en-IN')}</span></div>`:''}
+    <div class="tot-row grand"><span>Total payable</span><span class="tot-val">₹${grand.toLocaleString('en-IN')}</span></div>`;
+  updateMiniPreview();
+}
+
+function setMkGst(type,el){
+  mkGstType=type;
+  document.querySelectorAll('#mk_gst_toggle .gst-opt').forEach(b=>b.classList.remove('on')); el.classList.add('on');
+  document.getElementById('mk_gst_info').textContent={igst:'ℹ Inter-state supply — IGST applied',cgst:'ℹ Intra-state supply — CGST + SGST will apply',exempt:'ℹ GST exempt — no tax calculated'}[type];
+  renderMkTotals();
+}
+
+function updateMiniPreview(){
+  const pv=document.getElementById('mkPreview'); if(!pv) return;
+  let sub=0,tax=0;
+  mkItems.forEach(item=>{ const b=(item.qty||0)*(item.rate||0); sub+=b; tax+=mkGstType==='exempt'?0:b*(item.gst||0)/100; });
+  const clientSel=document.getElementById('mk_client');
+  const clientName=clientSel.options[clientSel.selectedIndex]?.text||'Client';
+  pv.innerHTML=`
+    <div style="background:#1a5fa8;padding:12px 14px;color:white">
+      <div style="font-size:13px;font-weight:700">BillSwift Enterprises</div>
+      <div style="font-size:9px;opacity:0.7;margin-top:1px">TAX INVOICE · ${document.getElementById('mk_invno')?.value||'INV-XXXX'}</div>
+    </div>
+    <div style="padding:10px 14px;font-size:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div><div style="font-weight:600">${clientName}</div><div style="color:#666;font-size:9px">Bill To</div></div>
+        <div style="text-align:right"><div style="font-weight:600">${document.getElementById('mk_date')?.value||'—'}</div><div style="color:#666;font-size:9px">Invoice Date</div></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:8px">
+        <tr style="background:#e8f0fb"><th style="padding:4px;text-align:left">Item</th><th style="padding:4px;text-align:right">Total</th></tr>
+        ${mkItems.filter(i=>i.desc).map(item=>{ const b=(item.qty||0)*(item.rate||0),t=mkGstType==='exempt'?0:b*(item.gst||0)/100; return`<tr><td style="padding:4px">${item.desc} ×${item.qty}</td><td style="padding:4px;text-align:right;font-family:monospace">₹${(b+t).toLocaleString('en-IN')}</td></tr>`; }).join('')}
+      </table>
+      <div style="display:flex;justify-content:space-between;background:#1a5fa8;color:white;padding:6px 8px;border-radius:4px;font-weight:700;font-size:10px">
+        <span>Total Payable</span><span>₹${Math.round(sub+tax).toLocaleString('en-IN')}</span>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════
+function handleSearch(val){
+  if(!val) return;
+  if(val.toLowerCase().includes('inv')) showToast(`Searching invoices for "${val}"...`,'info');
+  else if(val.toLowerCase().includes('sku')||val.toLowerCase().includes('stock')) showToast(`Searching inventory for "${val}"...`,'info');
+  else showToast(`Searching for "${val}"...`,'info');
+}
+
+function saveCompanySettings(){ showToast('Settings saved','success'); }
+
+
+// ═══════════════════════════════════════════════
+// LOGIN / REGISTER UI HELPERS
+// ═══════════════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  if (!email || !password) {
+    errEl.textContent = 'Please enter your email and password';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Signing in...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim(), password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      errEl.textContent = data.error || ('Login failed — ' + res.status);
+      errEl.style.display = 'block';
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
+      return;
+    }
+
+    TOKEN = data.token;
+    CURRENT_USER = data.user;
+    localStorage.setItem('bs_token', TOKEN);
+    localStorage.setItem('bs_user', JSON.stringify(CURRENT_USER));
+    hideLoginModal();
+    updateSidebarUser();
+    loadAllData();
+    showToast('Welcome back, ' + CURRENT_USER.name + '!', 'success');
+
+  } catch(e) {
+    errEl.textContent = 'Cannot reach server. Please try again in a moment.';
+    errEl.style.display = 'block';
+    console.error('Login error:', e);
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
+  }
+}
+
+function showSetup() {
+  document.getElementById('loginFormView').style.display = 'none';
+  document.getElementById('setupFormView').style.display = 'block';
+  document.getElementById('loginSubtitle').textContent = 'Create your admin account';
+}
+function showLogin() {
+  document.getElementById('loginFormView').style.display = 'block';
+  document.getElementById('setupFormView').style.display = 'none';
+  document.getElementById('loginSubtitle').textContent = 'Sign in to your account';
+}
+
+async function doRegister() {
+  const name = document.getElementById('setupName').value.trim();
+  const email = document.getElementById('setupEmail').value.trim();
+  const password = document.getElementById('setupPassword').value;
+  const errEl = document.getElementById('setupError');
+  errEl.style.display = 'none';
+
+  if (!name || !email || !password) { errEl.textContent = 'All fields required'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
+
+  const btn = event.target;
+  btn.textContent = 'Creating account...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API + '/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      errEl.textContent = data.error || 'Registration failed — ' + res.status;
+      errEl.style.display = 'block';
+      btn.textContent = 'Create Admin Account';
+      btn.disabled = false;
+      return;
+    }
+
+    // Server returns token + user directly — log in immediately
+    TOKEN = data.token;
+    CURRENT_USER = data.user;
+    localStorage.setItem('bs_token', TOKEN);
+    localStorage.setItem('bs_user', JSON.stringify(CURRENT_USER));
+    hideLoginModal();
+    updateSidebarUser();
+    loadAllData();
+    showToast('Welcome, ' + CURRENT_USER.name + '! Account created successfully.', 'success');
+
+  } catch(e) {
+    errEl.textContent = 'Cannot reach server. Make sure the app is deployed correctly.';
+    errEl.style.display = 'block';
+    console.error('Register error:', e);
+    btn.textContent = 'Create Admin Account';
+    btn.disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// FIRST-TIME SETUP / LOGIN CHECK
+// ═══════════════════════════════════════════════
+async function checkAuth() {
+  if (!TOKEN) { showLoginModal(); return; }
+  try {
+    const me = await apiGet('/auth/me');
+    if (!me) return;
+    CURRENT_USER = me;
+    localStorage.setItem('bs_user', JSON.stringify(me));
+    hideLoginModal();
+    updateSidebarUser();
+    loadAllData();
+  } catch {
+    logout();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+renderRoles();
+renderIntegrations();
+renderReportCards();
+renderMkItems();
+checkAuth();
+</script>
+</body>
+</html>
